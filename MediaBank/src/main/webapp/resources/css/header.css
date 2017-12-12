@@ -1,0 +1,145 @@
+@charset "UTF-8";
+html, body{
+	height: 100%;
+}
+*	{
+	margin: 0;
+	padding: 0;
+}
+
+a:link, a:visited{
+	/* 링크  밑줄 없애기, 링크 색상 지정 */
+	color : black;
+	text-decoration: none;
+}
+
+/*header 시작*/
+header{
+	width: 100%;
+	height: 50px;
+	position:fixed;
+	background-color: white;
+	border-bottom: 1px solid black;
+	z-index: 999;
+}
+.logo{
+	height: 30px;
+	margin : 10px 110px;
+}
+.modal-content{
+	margin-top : 100px;
+	width: 400px;
+}
+.modal-header>.modal-title{
+	margin-top : 10px;
+}
+.modal-header>h4{
+	display: inline-block;
+}
+.header_wrap	{
+	width: 920px;
+	height: 50px;
+	margin : 0 auto;
+	padding : 0 10px;
+	font-weight : bold;
+}
+
+.header_menu	{
+    height:35px;
+    text-align: center;
+    display: inline-block;
+}
+
+.header_join	{
+	width : 250px;
+    height: 35px;
+    margin : auto;
+    text-align: center;
+    float : right;
+    margin-right: 10px;
+}
+
+.header_menu>li, .header_join>li{
+	padding-right : 10px;
+	padding-top : 15px;
+	padding-left : 10px;
+	height: 100%;
+	display: inline-block;
+	
+}
+.login{
+	background-color: white;
+	border : 0px;
+}
+.modal-body>input, .kind{
+	margin-bottom: 5px;
+}
+.idpw{
+	width : 100%;
+	height: 30px;
+}
+.modal-content>form{
+	width : 100%;
+}
+.admin{
+	display: none;
+}
+.naver_login{
+	height: 34px;
+}
+/*header 끝*/
+/* contents 공통 부분 */
+.body{
+	width : 900px;
+	padding-top : 50px;
+	margin : 0 auto;
+	min-height: 100%;
+}
+.push{
+	height: 100px;
+}
+a{
+	color : black!import;
+}
+.modal-body>.kind{
+	float :left;
+}
+/*footer 시작*/
+footer	{
+	width: 100%;
+	height: 100px;
+	background-color: #83b14e;
+	position: relative;
+	margin-top: -100px;
+}
+
+.footer_wrap	{
+	margin: 0 auto;
+	width: 500px;
+	height: 100px;
+}
+.img{
+	display: inline-block;
+}
+.img>img{
+	display: inline-block;
+	overflow: hidden;
+	width: 100px;
+	height: auto;
+	vertical-align: inherit;
+}
+.footer_text	{
+	display: inline-block;
+	overflow: hidden;
+	width: 300px;
+	height: 100%;
+	
+}
+.footer_text>span{
+	margin-top : 30px;
+	font-size : 13px;
+	text-align: left;
+	float : right;
+	color : white;
+}
+/*footer 끝*/
