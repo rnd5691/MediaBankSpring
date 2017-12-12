@@ -1,0 +1,35 @@
+@CHARSET "UTF-8";
+.contents{
+	width : 900px;
+	height: 550px;
+	padding-top : 50px;
+	margin : 0 auto;
+}
+.title{
+	width : 100%;
+	height: 45px;
+	margin-bottom : 10px;
+	border-bottom: 1px solid #747474;
+}
+.title>h1, .title>h5{
+	display: inline-block;
+	margin : 0;
+	color : #83b14e;
+}
+.join_info{
+	width :450px;
+	height: 450px;
+	margin: 0 auto;
+}
+#id_check>h5, #pw_check>h5, #pwch_check>h5{
+	margin: 0;
+}
+#pw_check>h5, #pwch_check>h5{
+	margin-top: 5px;
+}
+td>span{
+	color : red;
+}
+form>div{
+	text-align: center;
+}

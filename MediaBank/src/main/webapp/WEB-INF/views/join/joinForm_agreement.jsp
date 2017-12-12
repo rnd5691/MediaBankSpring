@@ -40,17 +40,17 @@
 				$('#checkbox').prop('checked', check);
 			});
 		});
-		/* $('#ok').click(function(){
+		 $('#ok').click(function(){
 			/*네아로로 로그인했을경우 이동경로 설정  */
 			if(${!empty sessionScope.naver}){
 				$('#frm').prop("action", "memberPerson.member");
 			}
 			/*일반으로 회원가입 요청시에 이동경로 설정 */
 			else{
-				$('#frm').prop("action", "memberKind.member");
+				$('#frm').prop("action", "kind");
 			}
 			document.frm.submit();
-		}); */
+		});
 		
 	});
 </script>
@@ -62,7 +62,7 @@
 		<article class="title">
 			<h1>회원 가입</h1> <h5>이용약관</h5>
 		</article>
-		<form class="agreement" id="frm">
+		<form class="agreement" id="frm" method="post">
 			<article class="whole">
 				<b>
 					이용약관, 개인정보 수집 및 이용,<br/>위치정보 이용약관 (선택),<br/>
