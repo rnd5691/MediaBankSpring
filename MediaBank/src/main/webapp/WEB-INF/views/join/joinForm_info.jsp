@@ -148,7 +148,7 @@
 <section class="body">
 	<article class="contents">
 		<article class="title">
-			<h1>회원 가입</h1> <h5><c:if test="${kind == 'company'}">기업</c:if><c:if test="${kind == 'person'}">개인</c:if>회원 가입</h5>
+			<h1>회원 가입</h1>  <h5><c:if test="${kind == 'company'}">기업</c:if><c:if test="${kind == 'person'}">개인</c:if>회원 가입</h5>
 		</article>
 		<article class="join_info">
 			<form name="frm" method="post">
