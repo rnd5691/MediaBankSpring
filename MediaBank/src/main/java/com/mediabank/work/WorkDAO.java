@@ -6,10 +6,14 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.mediabank.file.FileDTO;
 import com.mediabank.member.MemberDAO;
 import com.mediabank.util.DBConnector;
+import com.mediabank.util.MakeRow;
 
+@Repository
 public class WorkDAO {
 	//다운로드히트 업데이트 
 			public void downloadHitUpdate(int work_seq) throws Exception {

@@ -9,9 +9,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.stereotype.Repository;
+
 import com.mediabank.member.MemberDAO;
 import com.mediabank.util.DBConnector;
+import com.mediabank.util.MakeRow;
 
+@Repository
 public class FileDAO {
 	//전체 작품 번호 가져오기
 		public List<Integer> work_seq(int user_num, String file_kind) throws Exception{

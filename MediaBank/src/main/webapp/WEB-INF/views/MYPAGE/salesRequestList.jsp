@@ -42,7 +42,7 @@
 						<td>승인현황</td>
 						<td>등록일자</td>
 					</tr>
-					<%-- <c:forEach items="${requestScope.list}" var="dto">
+					<c:forEach items="${list}" var="dto">
 						<tr>
 							<td>${dto.work_seq}</td>
 							<td><a href="mypageSalesRequestView.mypage?work_seq=${dto.work_seq}">${dto.work}</a></td>
@@ -50,28 +50,28 @@
 							<td>${dto.upload_check}</td>
 							<td>${dto.work_date}</td>
 						</tr>
-					</c:forEach> --%>
+					</c:forEach>
 				</table>
 				
-				<%-- <a  id="btn" href="mypageSalesRequestWrite.mypage" class="btn btn-default">WRITE</a>
+				<a  id="btn" href="mypageSalesRequestWrite.mypage" class="btn btn-default">WRITE</a>
 				
 				<c:if test="${makePage.totalPage > 0}">
 					<div class="paging">
 						<ul class="pagination">
 							<c:if test="${makePage.curBlock>1}">
-								<li><a href="./mypageSalesRequestList.mypage?curPage=1">&lt;&lt;</a></li>
-								<li><a href="./mypageSalesRequestList.mypage?curPage=${makePage.startNum-1}">[이전]</a></li>
+								<li><a href="./salesRequestList?curPage=1">&lt;&lt;</a></li>
+								<li><a href="./salesRequestList?curPage=${makePage.startNum-1}">[이전]</a></li>
 							</c:if>
 							<c:forEach begin="${makePage.startNum}" end="${makePage.lastNum}" var="i">
-								<li><a href="./mypageSalesRequestList.mypage?curPage=${i}">${i}</a></li>
+								<li><a href="./salesRequestList?curPage=${i}">${i}</a></li>
 							</c:forEach>
 							<c:if test="${makePage.curBlock < makePage.totalBlock}">
-								<li><a href="./mypageSalesRequestList.mypage?curPage=${requestScope.makePage.getLastNum()+1}">[다음]</a></li>
-								<li><a href="./mypageSalesRequestList.mypage?curPage=${makePage.totalPage}">&gt;&gt;</a></li>
+								<li><a href="./salesRequestList?curPage=${makePage.getLastNum()+1}">[다음]</a></li>
+								<li><a href="./salesRequestList?curPage=${makePage.totalPage}">&gt;&gt;</a></li>
 							</c:if>
 						</ul>
 					</div>
-				</c:if>	 --%>
+				</c:if> 
 					
 			</div>
 	</div>

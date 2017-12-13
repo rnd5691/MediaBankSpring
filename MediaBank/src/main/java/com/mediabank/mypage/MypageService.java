@@ -1,6 +1,8 @@
 package com.mediabank.mypage;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -15,6 +17,9 @@ import com.mediabank.member.MemberDTO;
 import com.mediabank.person.PersonDAO;
 import com.mediabank.person.PersonDTO;
 import com.mediabank.util.DBConnector;
+import com.mediabank.util.PageMaker;
+import com.mediabank.work.WorkDAO;
+import com.mediabank.work.WorkDTO;
 
 @Service
 public class MypageService {
@@ -24,10 +29,35 @@ public class MypageService {
 	private CompanyDAO companyDAO;
 	@Autowired
 	private MemberDAO memberDAO;
+	@Autowired
+	private WorkDAO workDAO;
 	
 	//---------<내 작품 판매승인 요청 현황>---
-	public void salesRequestList() throws Exception{
+	public List<WorkDTO> salesRequestList(Model model,int curPage, MemberDTO memberDTO) throws Exception{
+		int totalCount = 0;
+		List<WorkDTO> ar = new ArrayList<WorkDTO>();
+		PageMaker pageMaker = null;
+		if(memberDTO.getKind().equals("admin")) {
+			totalCount = workDAO.getTotalCount();
+			pageMaker = new PageMaker(curPage, totalCount);
+			//탈퇴회원을 제외한 유저 번호 가져오기
+			List<Integer> user_ar = memberDAO.adminDropOutWork();
+			List<WorkDTO> work_ar = workDAO.adminSelectList(pageMaker.getMakeRow());
+			for(int user_num : user_ar){
+				for(WorkDTO workDTO : work_ar){
+					if(user_num==workDTO.getUser_num()){
+						ar.add(workDTO);
+					}
+				}
+			}
+		}else {
+			totalCount = workDAO.getTotalCount(memberDTO.getUser_num());
+			pageMaker = new PageMaker(curPage, totalCount);
+			ar = workDAO.selectList(memberDTO.getUser_num(), pageMaker.getMakeRow());
+		}
+		model.addAttribute("makePage", pageMaker.getMakePage());
 		
+		return ar;
 	}
 	//---------<내정보 메뉴 관련>---------
 	public int update(MemberDTO memberDTO,PersonDTO personDTO,CompanyDTO companyDTO) throws Exception{
