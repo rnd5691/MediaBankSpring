@@ -93,7 +93,7 @@ public class PersonDAO {
 				personDTO.setName(rs.getString("name"));
 				personDTO.setBirth(rs.getDate("birth"));
 				personDTO.setArtist(rs.getString("artist"));
-				personDTO.setNickName(rs.getString("nickname"));
+				personDTO.setNickname(rs.getString("nickname"));
 			}
 			DBConnector.disConnect(rs, st, con);
 			
@@ -108,7 +108,7 @@ public class PersonDAO {
 			PreparedStatement st = con.prepareStatement(sql);
 			
 			st.setInt(1, personDTO.getUser_num());
-			st.setString(2, personDTO.getNickName());
+			st.setString(2, personDTO.getNickname());
 			st.setString(3, personDTO.getName());
 			st.setDate(4, personDTO.getBirth());
 			st.setString(5, personDTO.getArtist());

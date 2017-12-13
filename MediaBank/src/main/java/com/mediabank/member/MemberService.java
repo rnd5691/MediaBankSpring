@@ -2,6 +2,8 @@ package com.mediabank.member;
 
 import java.sql.Connection;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,24 @@ public class MemberService {
 	private CompanyDAO companyDAO;
 	@Autowired
 	private PersonDAO personDAO;
-	
+	/*
+	  -------------------------------------------------
+	  [로그인]
+	*/
+	public String login(MemberDTO memberDTO,HttpSession session) throws Exception{
+		memberDTO = memberDAO.selectOne(memberDTO);
+		String message = "로그인 실패 하셨습니다.";
+		if(memberDTO != null){
+			session.setAttribute("member", memberDTO);
+			message = memberDTO.getId()+"님 어서오세요.";
+		}
+		
+		return message;
+	}
+	/*
+	  -------------------------------------------------
+	  [회원가입]
+	*/
 	public boolean idCheck(String id) throws Exception{
 		return memberDAO.checkId(id);
 	}

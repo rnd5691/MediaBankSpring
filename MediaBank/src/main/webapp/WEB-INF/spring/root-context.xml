@@ -9,4 +9,5 @@
 	<context:component-scan base-package="com.mediabank.company"/>
 	<context:component-scan base-package="com.mediabank.member"/>
 	<context:component-scan base-package="com.mediabank.person"/>	
+	<context:component-scan base-package="com.mediabank.mypage"/>
 </beans>

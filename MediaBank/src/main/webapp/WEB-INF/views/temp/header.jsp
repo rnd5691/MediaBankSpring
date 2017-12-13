@@ -25,8 +25,8 @@
 						<li><a href="${pageContext.request.contextPath}/member/joinAgreement">JOIN</a></li>
 					</c:when>
 					<c:when test="${sessionScope.member ne null}">
-						<li><a href="${pageContext.request.contextPath}/member/memberLogout.member">로그아웃</a></li>
-						<li><a href="${pageContext.request.contextPath}/mypage/mypageMyInfo.mypage">MYPAGE</a></li>
+						<li><a href="${pageContext.request.contextPath}/member/logout">로그아웃</a></li>
+						<li><a href="${pageContext.request.contextPath}/mypage/myinfo">MYPAGE</a></li>
 					</c:when>
 				</c:choose>
 			</ul>
@@ -42,7 +42,7 @@
 						        <h4 class="modal-title">로그인</h4>
 						    	<button type="button" class="close" data-dismiss="modal">&times;</button>
 						    </div>
-						    <form action="${pageContext.request.contextPath}/member/memberLogin.member">
+						    <form action="${pageContext.request.contextPath}/member/login">
 						    	<div class="modal-body">
 						    		<div class="kind">
 							    		<input type="radio" name="kind" value="company" required="required"> 기업
@@ -53,7 +53,7 @@
 						         	<input class="idpw" type="password" name="pw" required="required" placeholder="비밀번호를 입력">
 						        </div>
 						        <div class="modal-footer">
-						        	<a href="${pageContext.request.contextPath}/member/memberNaverLogin.member"><img class="naver_login" src="${pageContext.request.contextPath}/images/naver_login.PNG"></a>
+						        	<a href="${pageContext.request.contextPath}/member/memberNaverLogin.member"><img class="naver_login" src="${pageContext.request.contextPath}/resources/images/naver_login.PNG"></a>
 						        	<button class="btn btn-default">Login</button>
 						        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 						        </div>						   

@@ -1,5 +1,7 @@
 package com.mediabank.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +18,43 @@ import com.mediabank.person.PersonDTO;
 public class MemberController {
 	@Autowired
 	private MemberService memberService;
+	/*
+	  -------------------------------------------------
+	  [로그아웃]
+	*/
+	@RequestMapping("logout")
+	public String logout(HttpSession session){
+		session.invalidate();
+		
+		return "redirect:../MediaBank/main";
+	}
+	/*
+	  -------------------------------------------------
+	  [로그인]
+	*/
+	@RequestMapping("login")
+	public String login(RedirectAttributes ra,MemberDTO memberDTO,HttpSession session){
+		String message = null;
+		String path = null;
+		try{
+			message = memberService.login(memberDTO, session);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		ra.addFlashAttribute("message", message);
+		if(memberDTO.getKind().equals("admin")){
+			path = "redirect:../MediaBank/main";
+		}else{
+			path = "redirect:../MediaBank/main";
+		}
+		
+		return path;
+	}
 	
+	/*
+	  -------------------------------------------------
+	  [회원가입]
+	*/
 	//동의 페이지
 	@RequestMapping("joinAgreement")
 	public String joinAgreement() {

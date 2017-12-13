@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+.contents{
+	width : 100%;
+	background-color: black;
+}
+.totalbody{
+	margin-bottom: 20px;
+}
+td>span{
+	color : red;
+}
+#btn{
+	text-align: center;
+}
