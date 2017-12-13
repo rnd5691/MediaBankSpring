@@ -5,8 +5,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link rel="stylesheet" type="text/css" href="plugin/slick/slick.css"/>
-<link rel="stylesheet" type="text/css" href="plugin/slick/slick-theme.css"/>
+<link rel="stylesheet" type="text/css" href="../resources/plugin/slick/slick.css"/>
+<link rel="stylesheet" type="text/css" href="../resources/plugin/slick/slick-theme.css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <link href="../resources/css/header.css" rel="stylesheet">
 
@@ -24,6 +24,10 @@
 <link href="../resources/css/index.css" rel="stylesheet">
 <script>
 $(function() {
+	var message = '${message}';
+	if(message != ""){
+		alert(message);
+	}
 	$("#btn").click(function() {
 		if ($("#select").val() == "video") {
 			$("#kind").prop("value", false);
@@ -135,7 +139,7 @@ $(function() {
 <!-- slick plugin -->
 	<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-	<script type="text/javascript" src="plugin/slick/slick.min.js"></script>
+	<script type="text/javascript" src="../resources/plugin/slick/slick.min.js"></script>
 <!-- slick plugin finish -->
 </body>
 </html>

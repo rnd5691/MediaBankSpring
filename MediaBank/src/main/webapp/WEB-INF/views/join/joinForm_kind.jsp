@@ -23,10 +23,8 @@
 			<h1>회원 가입</h1> <h5>계정 선택</h5>
 		</article>
 		<article class="session">
-			<a class="button" href="company">기업으로 가입하기</a>
-			<a class="button" href="person">개인으로 가입하기</a>
-
-			
+			<a class="button" href="info?kind=company">기업으로 가입하기</a>
+			<a class="button" href="info?kind=person">개인으로 가입하기</a>
 		</article>
 	</article>
 	<div class="push"></div>

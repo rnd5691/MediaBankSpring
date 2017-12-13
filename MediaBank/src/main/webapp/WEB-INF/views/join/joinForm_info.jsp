@@ -28,7 +28,7 @@
 			id_ch = true;
 			var id = $("#id").val();
 			
-			$.get('memberIdCheck.member?id='+id, function(result){
+			$.post('idCheck?id='+id, function(result){
 				$("#id_check").html(result);
 				if($("#id_check").text().trim()=='이미 사용 중인 ID 입니다.'){
 					id_ch = false;
@@ -75,7 +75,7 @@
 				pw_ch = true;
 			}
 			
-			$.get("memberPwCheck.member?check="+pw_ch, function(result){
+			$.post("pwCheck?check="+pw_ch, function(result){
 				$("#pw_check").html(result);
 				if($("#pw_check").text().trim()=='사용 가능한 PW 입니다.'){
 					$("#pw_check").css('color', 'blue');
@@ -99,7 +99,7 @@
 				pw_ch = false;
 			}
 			
-			$.get("memberPwchCheck.member?check="+pw_ch, function(result){
+			$.get("pwchCheck?check="+pw_ch, function(result){
 				$("#pwch_check").html(result);
 				if($("#pwch_check").text().trim()=='비밀 번호가 일치 합니다.'){
 					$("#pwch_check").css('color', 'blue');
@@ -116,7 +116,7 @@
 				pw_ch = true;
 			}
 			
-			$.get("memberPwchCheck.member?check="+pw_ch, function(result){
+			$.get("pwchCheck?check="+pw_ch, function(result){
 				$("#pwch_check").html(result);
 				if($("#pwch_check").text().trim()=='비밀 번호가 일치 합니다.'){
 					$("#pwch_check").css('color', 'blue');
@@ -136,7 +136,7 @@
 				if(ch==false){
 					alert("ID 나 비밀번호를 확인 하십시오.");
 				}else{
-					document.frm.setAttribute('action', 'memberInsert.member');
+					document.frm.setAttribute('action', 'join');
 				}
 			}
 		});
