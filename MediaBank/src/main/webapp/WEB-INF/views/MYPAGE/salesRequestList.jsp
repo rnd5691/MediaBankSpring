@@ -14,6 +14,10 @@
 <link href="${pageContext.request.contextPath}/resources/css/mypage/List.css" rel="stylesheet">
 <script type="text/javascript">
 	$(function(){
+		var message = '${message}';
+		if(message != ""){
+			alert(message);
+		}
 		$("#salesRequestList").css('color', 'white');
 		$("#salesRequestList").css('background-color', '#83b14e');
 	});
@@ -45,7 +49,7 @@
 					<c:forEach items="${list}" var="dto">
 						<tr>
 							<td>${dto.work_seq}</td>
-							<td><a href="mypageSalesRequestView.mypage?work_seq=${dto.work_seq}">${dto.work}</a></td>
+							<td><a href="salesRequestView?work_seq=${dto.work_seq}">${dto.work}</a></td>
 							<td>${dto.nickname}</td>
 							<td>${dto.upload_check}</td>
 							<td>${dto.work_date}</td>

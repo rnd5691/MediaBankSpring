@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 
 import com.mediabank.company.CompanyDAO;
 import com.mediabank.company.CompanyDTO;
+import com.mediabank.file.FileDAO;
+import com.mediabank.file.FileDTO;
 import com.mediabank.member.MemberDAO;
 import com.mediabank.member.MemberDTO;
 import com.mediabank.person.PersonDAO;
@@ -31,8 +33,56 @@ public class MypageService {
 	private MemberDAO memberDAO;
 	@Autowired
 	private WorkDAO workDAO;
-	
+	@Autowired
+	private FileDAO fileDAO;
 	//---------<내 작품 판매승인 요청 현황>---
+	public void salesRequestViewForm(Model model,int work_seq) throws Exception{
+		Connection con = null;
+		WorkDTO workDTO = null;
+		FileDTO fileDTO = null;
+		try {
+			con = DBConnector.getConnect();
+			
+			workDTO = workDAO.selectOne(work_seq, con);
+			fileDTO = fileDAO.selectOne(work_seq, con);
+			
+			model.addAttribute("work", workDTO);
+			model.addAttribute("file", fileDTO);
+		}catch(Exception e) {
+			e.printStackTrace();
+			con.rollback();
+		}finally {
+			con.close();
+		}
+	}
+	public boolean salesRequestView(Model model,int work_seq) throws Exception{
+		boolean check = workDAO.adminCheck(work_seq);
+		
+		if(check) {
+			//대기중일때
+			WorkDTO workDTO = null;
+			FileDTO fileDTO = null;
+			Connection con = null;
+			
+			try {
+				con = DBConnector.getConnect();
+				con.setAutoCommit(false);
+				workDTO = workDAO.selectOne(work_seq, con);
+				fileDTO = fileDAO.selectOne(work_seq, con);
+				con.commit();
+			}catch(Exception e) {
+				e.printStackTrace();
+				con.rollback();
+			}finally {
+				con.setAutoCommit(true);
+				con.close();
+			}
+			model.addAttribute("file", fileDTO);
+			model.addAttribute("work", workDTO);
+		}
+		
+		return check;
+	}
 	public List<WorkDTO> salesRequestList(Model model,int curPage, MemberDTO memberDTO) throws Exception{
 		int totalCount = 0;
 		List<WorkDTO> ar = new ArrayList<WorkDTO>();

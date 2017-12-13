@@ -1,0 +1,48 @@
+@CHARSET "UTF-8";
+.body{
+	width: 1000px;
+}
+.totalbody{
+	width: 700px;
+	margin-bottom: 20px;
+}
+td>img{
+	width : 310px;
+	height: auto;
+}
+.size{
+	width: 50px;
+}
+td>input, td>textarea{
+	border: 0;
+}
+
+td>textarea, div>textarea{
+	resize: none;
+	width: 250px;
+	height: auto;
+}
+.reply>textarea{
+	width : 100%;
+	text-align: center;
+}
+.reply{
+	margin-bottom: 20px;
+}
+.bloat {
+	float: right;
+	margin-left: 5px;
+}
+#work{
+	width : 100%;
+}
+video::-internal-media-controls-download-button {
+        display:none;
+}
+video::-webkit-media-controls {
+        overflow: hidden;
+}
+video::-webkit-media-controls-enclosure {
+        width: calc(100% + 32px);
+        margin-left: auto;
+}

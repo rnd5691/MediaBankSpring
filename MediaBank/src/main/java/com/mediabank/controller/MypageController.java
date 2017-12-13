@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -22,7 +23,50 @@ import com.mediabank.work.WorkDTO;
 public class MypageController {
 	@Autowired
 	private MypageService mypageService;
-	
+	//--------------<내 작품 승인 현황>--------------
+	@RequestMapping(value="salesRequestUpdate", method=RequestMethod.POST)
+	public void salesRequestUpdate() {
+		
+	}
+	@RequestMapping(value="salesRequestUpdate", method=RequestMethod.GET)
+	public String salesRequestUpdateForm(Model model, int work_seq) {
+		try {
+			mypageService.salesRequestViewForm(model, work_seq);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return "MYPAGE/salesRequestViewUpdate";
+	}
+	@RequestMapping("salesRequestView")
+	public String salesRequestView(RedirectAttributes ra,Model model,int work_seq,HttpSession session) {
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path = null;
+		if(memberDTO==null) {
+			ra.addFlashAttribute("message", "잘못된 접근 방식 입니다.");
+			path = "redirect:../MediaBank/main";
+		}else {
+			boolean check = false;
+			try {
+				check=mypageService.salesRequestView(model, work_seq);
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(memberDTO.getKind().equals("admin")) {
+				
+			}else {
+				if(!check) {
+					ra.addFlashAttribute("message","이미 관리가 완료 된 작품입니다.");
+					path = "redirect:salesRequestList";
+				}else {
+					path = "MYPAGE/salesRequestView";					
+				}
+			}
+		}
+		return path;
+	}
 	@RequestMapping("salesRequestList")
 	public String salesRequestList(RedirectAttributes ra,Model model,@RequestParam(defaultValue="1")int curPage, HttpSession session){
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
@@ -43,7 +87,7 @@ public class MypageController {
 		}
 		return path;
 	}
-	
+	//------------<내 정보>---------------------
 	@RequestMapping("update")
 	public String update(RedirectAttributes ra,MemberDTO memberDTO,PersonDTO personDTO,CompanyDTO companyDTO){
 		int result=0;
