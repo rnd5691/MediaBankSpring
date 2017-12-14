@@ -110,9 +110,11 @@ public class MypageService {
 	}
 	public void removeFile(String path,String filename){
 		File file = new File(path, filename);//경로명,파일명
-		if(file.exists()){
+		System.out.println(file.getPath());
+		if(file.exists()==true){
 			//파일이 존재 한다면
-			file.delete();
+			boolean check=file.delete();
+			System.out.println(check);
 		}
 	}
 	public int fileUpload(WorkDTO workDTO, FileDTO fileDTO) throws Exception{

@@ -25,6 +25,11 @@ import com.mediabank.work.WorkDTO;
 public class MypageController {
 	@Autowired
 	private MypageService mypageService;
+	//--------------<현재 판매중인 내 작품>-----------
+	@RequestMapping(value="salesRequestNow", method=RequestMethod.GET)
+	public void salesRequestNow() {
+		
+	}
 	//--------------<내 작품 승인 현황>--------------
 	@RequestMapping(value="viewDelete")
 	public String delete(RedirectAttributes ra,HttpSession session,int work_seq){
