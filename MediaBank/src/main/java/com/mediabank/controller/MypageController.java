@@ -66,8 +66,22 @@ public class MypageController {
 		return path;
 	}
 	@RequestMapping(value="salesRequestUpdate", method=RequestMethod.POST)
-	public void salesRequestUpdate() {
+	public String salesRequestUpdate(RedirectAttributes ra,MultipartHttpServletRequest request,HttpSession session,FileDTO fileDTO, WorkDTO workDTO) {
+		int result=0;
+		try{
+			result = mypageService.viewUpdate(ra, request, session, fileDTO, workDTO);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		if(result != -1){
+			if(result>0){
+				ra.addFlashAttribute("message", "업로드에 성공하였습니다.");
+			}else{
+				ra.addFlashAttribute("message", "업로드에 실패하였습니다.");
+			}			
+		}
 		
+		return "redirect:salesRequestList";
 	}
 	@RequestMapping(value="salesRequestUpdate", method=RequestMethod.GET)
 	public String salesRequestUpdateForm(Model model, int work_seq) {

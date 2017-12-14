@@ -42,7 +42,82 @@ public class MypageService {
 	@Autowired
 	private FileDAO fileDAO;
 	//---------<내 작품 판매승인 요청 현황>---
+	public int viewUpdate(RedirectAttributes ra,MultipartHttpServletRequest request,HttpSession session,FileDTO fileDTO, WorkDTO workDTO) throws Exception{
+		FileDTO deleteDTO = fileDAO.selectOne(workDTO.getWork_seq());
+		String path = session.getServletContext().getRealPath("resources/upload/");
+		int result=0;
+		//파일 삭제
+		this.removeFile(path, deleteDTO.getFile_name());
+		File dir = new File(path);
+		
+		if(!dir.isDirectory()){
+			dir.mkdir();
+		}
+		String id = UUID.randomUUID().toString();
+		MultipartFile file = request.getFile("file");
+		String originalFileName = file.getOriginalFilename();//원본 파일 명
+		//파일 확장자 구분
+		String extension = FilenameUtils.getExtension(originalFileName);
+		String saveFileName = id+"."+extension;
+		
+		System.out.println("orginalFileName : "+originalFileName);
+		System.out.println("saveFileName : "+saveFileName);
+		
+		if(!originalFileName.equals("")){
+				String savePath = path + saveFileName;
+				System.out.println("savePath : "+savePath);
+				
+				file.transferTo(new File(savePath));
+				
+				fileDTO.setFile_route(savePath);
+				fileDTO.setFile_name(saveFileName);
+				
+				System.out.println("work_seq : "+workDTO.getWork_seq());
+				//파일 확장자 구분
+				if(extension.equals("mp4")||extension.equals("avi")||extension.equals("flv")){
+					extension="video";
+					fileDTO.setFile_kind(extension);
+					result = this.fileUpload(workDTO, fileDTO);
+				}else if(extension.equals("jpg")||extension.equals("JPG")||extension.equals("png")||extension.equals("PNG")){
+					extension="image";
+					fileDTO.setFile_kind(extension);
+					result = this.fileUpload(workDTO, fileDTO);;
+				}else{
+					ra.addFlashAttribute("message", "이미지나 동영상 형식의 파일이 아닙니다.");
+					result = -1;
+				}
+		}
+		return result;
+	}
+	public void removeFile(String path,String filename){
+		File file = new File(path, filename);//경로명,파일명
+		if(file.exists()){
+			//파일이 존재 한다면
+			file.delete();
+		}
+	}
 	public int fileUpload(WorkDTO workDTO, FileDTO fileDTO) throws Exception{
+		Connection con = null;
+		int result = 0;
+		try{
+			con = DBConnector.getConnect();
+			con.setAutoCommit(false);
+			
+			result=workDAO.salesViewUpdate(workDTO, con);
+			//------------------------------------------
+			
+			result = fileDAO.salesRequestViewUpdate(fileDTO, con);
+		}catch(Exception e){
+			con.rollback();
+			e.printStackTrace();
+		}finally{
+			con.setAutoCommit(true);
+			con.close();
+		}
+		
+		return result;
+	}
+	public int fileInsert(WorkDTO workDTO, FileDTO fileDTO) throws Exception{
 		Connection con = null;
 		int result = 0;
 		try{
@@ -102,11 +177,11 @@ public class MypageService {
 				if(extension.equals("mp4")||extension.equals("avi")||extension.equals("flv")){
 					extension="video";
 					fileDTO.setFile_kind(extension);
-					result = this.fileUpload(workDTO, fileDTO);
+					result = this.fileInsert(workDTO, fileDTO);
 				}else if(extension.equals("jpg")||extension.equals("JPG")||extension.equals("png")||extension.equals("PNG")){
 					extension="image";
 					fileDTO.setFile_kind(extension);
-					result = this.fileUpload(workDTO, fileDTO);
+					result = this.fileInsert(workDTO, fileDTO);
 				}else{
 					ra.addFlashAttribute("message", "이미지나 동영상 형식의 파일이 아닙니다.");
 					result = -1;
@@ -126,7 +201,7 @@ public class MypageService {
 			con = DBConnector.getConnect();
 			
 			workDTO = workDAO.selectOne(work_seq, con);
-			fileDTO = fileDAO.selectOne(work_seq, con);
+			fileDTO = fileDAO.selectOne(work_seq);
 			
 			model.addAttribute("work", workDTO);
 			model.addAttribute("file", fileDTO);
@@ -150,7 +225,7 @@ public class MypageService {
 				con = DBConnector.getConnect();
 				con.setAutoCommit(false);
 				workDTO = workDAO.selectOne(work_seq, con);
-				fileDTO = fileDAO.selectOne(work_seq, con);
+				fileDTO = fileDAO.selectOne(work_seq);
 				con.commit();
 			}catch(Exception e) {
 				e.printStackTrace();

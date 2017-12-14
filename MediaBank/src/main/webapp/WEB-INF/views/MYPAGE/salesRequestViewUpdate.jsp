@@ -88,7 +88,7 @@ $(function(){
 		if(check==false){
 			alert('변경 사항이 없습니다.');
 		}else{
-			$("#frm").prop("action", "mypageSalesRequestViewUpdate.mypage");
+			$("#frm").prop("action", "salesRequestUpdate");
 			$("#frm").submit();
 		}
 	});

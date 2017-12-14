@@ -118,33 +118,6 @@ public class FileDAO {
 				return ar;
 			}
 				
-				//현재 판매중인 내 작품 비디오 조회 메소드
-				/*public List<FileDTO> selectNow2(int user_num, String file_kind) throws Exception	{
-				Connection con = DBConnector.getConnect();
-				String sql = "select f.file_num, f.work_seq, f.file_name,f.file_kind, w.user_num, w.sell from work_info w, file_table f where f.work_seq=w.work_seq and w.user_num=? and w.upload_check='승인' and f.file_kind='video'";
-				PreparedStatement st = con.prepareStatement(sql);
-				
-				st.setInt(1, user_num);
-				
-				ResultSet rs = st.executeQuery();
-				
-				List<FileDTO> ar1 = new ArrayList<>();
-				FileDTO fileDTO = null;
-				while(rs.next())	{
-					fileDTO = new FileDTO();
-					fileDTO.setFile_num(rs.getInt("file_num"));
-					fileDTO.setWork_seq(rs.getInt("work_seq"));
-					fileDTO.setFile_name(rs.getString("file_name"));
-					fileDTO.setUser_num(rs.getInt("user_num"));
-					fileDTO.setFile_kind(rs.getString("file_kind"));
-					fileDTO.setSell(rs.getString("sell"));
-					ar1.add(fileDTO);
-				}
-				
-				DBConnector.disConnect(rs, st, con);
-				return ar1;
-				}*/
-					
 			//salesReuqestViewDelete
 			public void salesRequestViewDelete(int work_seq, Connection con) throws Exception {
 				String sql = "DELETE file_table WHERE work_seq=?";
@@ -169,7 +142,8 @@ public class FileDAO {
 			}
 			
 			//부모의 work_seq로 file_table 모든 정보 가져오기
-			public FileDTO selectOne(int work_seq, Connection con) throws Exception{
+			public FileDTO selectOne(int work_seq) throws Exception{
+				Connection con = DBConnector.getConnect();
 				String sql = "select * from file_table where work_seq=?";
 				PreparedStatement st = con.prepareStatement(sql);
 				
@@ -187,8 +161,7 @@ public class FileDAO {
 					fileDTO.setFile_kind(rs.getString("file_kind"));
 					fileDTO.setWork_seq(work_seq);
 				}
-				rs.close();
-				st.close();
+				DBConnector.disConnect(rs, st, con);
 				return fileDTO;
 			}
 			
