@@ -26,6 +26,24 @@ public class MypageController {
 	@Autowired
 	private MypageService mypageService;
 	//--------------<내 작품 승인 현황>--------------
+	@RequestMapping(value="viewDelete")
+	public String delete(RedirectAttributes ra,HttpSession session,int work_seq){
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path = null;
+		if(memberDTO==null){
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else{
+			try{
+				mypageService.viewDelete(session, work_seq);
+				path="redirect:salesRequestList";
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		
+		return path;
+	}
 	@RequestMapping(value="write", method=RequestMethod.POST)
 	public String write(RedirectAttributes ra,MultipartHttpServletRequest request,HttpSession session,FileDTO fileDTO, WorkDTO workDTO){
 		int result = 0;

@@ -42,6 +42,25 @@ public class MypageService {
 	@Autowired
 	private FileDAO fileDAO;
 	//---------<내 작품 판매승인 요청 현황>---
+	public void viewDelete(HttpSession session,int work_seq) throws Exception{
+		Connection con = null;
+		try{
+			con = DBConnector.getConnect();
+			con.setAutoCommit(false);
+			FileDTO deleteDTO = fileDAO.selectOne(work_seq);
+			String path = session.getServletContext().getRealPath("resources/upload/");
+			this.removeFile(path, deleteDTO.getFile_name());
+			fileDAO.salesRequestViewDelete(work_seq, con);
+			workDAO.salesRequestViewDelete(work_seq, con);
+			con.commit();
+		}catch(Exception e){
+			e.printStackTrace();
+			con.rollback();
+		}finally{
+			con.setAutoCommit(true);
+			con.close();
+		}
+	}
 	public int viewUpdate(RedirectAttributes ra,MultipartHttpServletRequest request,HttpSession session,FileDTO fileDTO, WorkDTO workDTO) throws Exception{
 		FileDTO deleteDTO = fileDAO.selectOne(workDTO.getWork_seq());
 		String path = session.getServletContext().getRealPath("resources/upload/");

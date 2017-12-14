@@ -25,7 +25,7 @@
 		});
 		//삭제
 		$("#viewDelete").click(function(){
-			$("#frm").prop("action", "mypageSalesRequestViewDelete.mypage");
+			$("#frm").prop("action", "viewDelete");
 			$("#frm").submit();
 		});
 	});
