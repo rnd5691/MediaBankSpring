@@ -1,0 +1,17 @@
+@charset "UTF-8";
+.table{
+	margin : 0 auto;
+	width: 500px;
+}
+.input_info{
+	width : 300px;
+}
+td>textarea{
+	resize: none;
+	width : 200px;
+	height: 100px;
+}
+.button{
+	margin-bottom : 20px;
+	text-align: center;
+}

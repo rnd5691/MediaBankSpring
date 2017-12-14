@@ -10,9 +10,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mediabank.company.CompanyDTO;
+import com.mediabank.file.FileDTO;
 import com.mediabank.member.MemberDTO;
 import com.mediabank.mypage.MypageService;
 import com.mediabank.person.PersonDTO;
@@ -24,6 +26,45 @@ public class MypageController {
 	@Autowired
 	private MypageService mypageService;
 	//--------------<내 작품 승인 현황>--------------
+	@RequestMapping(value="write", method=RequestMethod.POST)
+	public String write(RedirectAttributes ra,MultipartHttpServletRequest request,HttpSession session,FileDTO fileDTO, WorkDTO workDTO){
+		int result = 0;
+		try {
+			result = mypageService.write(ra, request, session, fileDTO, workDTO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(result != -1){
+			if(result>0){
+				ra.addFlashAttribute("message", "업로드에 성공하였습니다.");
+			}else{
+				ra.addFlashAttribute("message", "업로드에 실패하였습니다.");
+			}			
+		}
+		
+		return "redirect:salesRequestList";
+	}
+	@RequestMapping(value="write", method=RequestMethod.GET)
+	public String writeForm(Model model,RedirectAttributes ra,HttpSession session){
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path = null;
+		if(memberDTO==null){
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else{
+			try {
+				mypageService.writeForm(model, memberDTO.getUser_num());
+				path = "MYPAGE/salesRequestWrite";
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return path;
+	}
 	@RequestMapping(value="salesRequestUpdate", method=RequestMethod.POST)
 	public void salesRequestUpdate() {
 		

@@ -482,17 +482,15 @@ public class WorkDAO {
 		}
 		
 		public int insert(WorkDTO workDTO,Connection con) throws Exception {
-			String sql = "INSERT INTO work_info VALUES(?,?,?,sysdate,?,?,?,?,?,?,0)";
+			String sql = "INSERT INTO work_info VALUES(?,?,?,sysdate,'대기중',?,?,?,?,'N',0)";
 			PreparedStatement st = con.prepareStatement(sql);
 			st.setInt(1, workDTO.getWork_seq());
 			st.setString(2, workDTO.getWork());
 			st.setInt(3, workDTO.getUser_num());
-			st.setString(4, workDTO.getUpload_check());
-			st.setString(5, workDTO.getTag());
-			st.setInt(6, workDTO.getPrice());
-			st.setString(7, workDTO.getContents());
-			st.setString(8, workDTO.getReply());
-			st.setString(9, workDTO.getSell());
+			st.setString(4, workDTO.getTag());
+			st.setInt(5, workDTO.getPrice());
+			st.setString(6, workDTO.getContents());
+			st.setString(7, workDTO.getReply());
 			int result = st.executeUpdate();
 			st.close();
 			return result;

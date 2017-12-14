@@ -1,14 +1,20 @@
 package com.mediabank.mypage;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mediabank.company.CompanyDAO;
 import com.mediabank.company.CompanyDTO;
@@ -36,6 +42,82 @@ public class MypageService {
 	@Autowired
 	private FileDAO fileDAO;
 	//---------<내 작품 판매승인 요청 현황>---
+	public int fileUpload(WorkDTO workDTO, FileDTO fileDTO) throws Exception{
+		Connection con = null;
+		int result = 0;
+		try{
+			con = DBConnector.getConnect();
+			con.setAutoCommit(false);
+			int seq = workDAO.fileNumSelect(con);
+			workDTO.setWork_seq(seq);
+			result=workDAO.insert(workDTO, con);
+			//------------------------------------------
+			fileDTO.setWork_seq(seq);
+			result = fileDAO.fileUpload(fileDTO, con);
+		}catch(Exception e){
+			con.rollback();
+			e.printStackTrace();
+		}finally{
+			con.setAutoCommit(true);
+			con.close();
+		}
+		
+		return result;
+	}
+	public int write(RedirectAttributes ra,MultipartHttpServletRequest request,HttpSession session,FileDTO fileDTO, WorkDTO workDTO) throws Exception{
+		int result = 0;
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		//파일 업로드 영역
+		String path = session.getServletContext().getRealPath("resources/upload/");
+		
+		File dir = new File(path);
+		
+		if(!dir.isDirectory()){
+			dir.mkdir();
+		}
+		String id = UUID.randomUUID().toString();
+		MultipartFile file = request.getFile("file");
+		String originalFileName = file.getOriginalFilename();//원본 파일 명
+		//파일 확장자 구분
+		String extension = FilenameUtils.getExtension(originalFileName);
+		String saveFileName = id+"."+extension;
+		
+		System.out.println("orginalFileName : "+originalFileName);
+		System.out.println("saveFileName : "+saveFileName);
+		
+		if(!originalFileName.equals("")){
+				String savePath = path + saveFileName;
+				System.out.println("savePath : "+savePath);
+				
+				file.transferTo(new File(savePath));
+				
+				workDTO.setNickname(personDAO.selectWriter(memberDTO.getUser_num()));
+				workDTO.setUser_num(memberDTO.getUser_num());
+				//------------------------------------------
+				fileDTO.setFile_route(savePath);
+				fileDTO.setFile_name(saveFileName);
+				
+				System.out.println("work_seq : "+workDTO.getWork_seq());
+				//파일 확장자 구분
+				if(extension.equals("mp4")||extension.equals("avi")||extension.equals("flv")){
+					extension="video";
+					fileDTO.setFile_kind(extension);
+					result = this.fileUpload(workDTO, fileDTO);
+				}else if(extension.equals("jpg")||extension.equals("JPG")||extension.equals("png")||extension.equals("PNG")){
+					extension="image";
+					fileDTO.setFile_kind(extension);
+					result = this.fileUpload(workDTO, fileDTO);
+				}else{
+					ra.addFlashAttribute("message", "이미지나 동영상 형식의 파일이 아닙니다.");
+					result = -1;
+				}
+		}
+		return result;
+	}
+	public void writeForm(Model model,int user_num) throws Exception{
+		PersonDTO personDTO = personDAO.selectOne(user_num);
+		model.addAttribute("nickname", personDTO.getNickname());
+	}
 	public void salesRequestViewForm(Model model,int work_seq) throws Exception{
 		Connection con = null;
 		WorkDTO workDTO = null;

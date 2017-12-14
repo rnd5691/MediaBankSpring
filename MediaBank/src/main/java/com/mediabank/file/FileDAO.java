@@ -6,9 +6,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Repository;
 
 import com.mediabank.member.MemberDAO;
@@ -196,7 +193,7 @@ public class FileDAO {
 			}
 			
 			//fileUpload
-				public int fileUpload(HttpServletRequest request, HttpServletResponse response, FileDTO fileDTO,Connection con) throws Exception {
+				public int fileUpload(FileDTO fileDTO,Connection con) throws Exception {
 					String sql = "INSERT INTO file_table VALUES(file_num.nextval,?,?,?,?,?,?)";
 					PreparedStatement st = con.prepareStatement(sql);
 					st.setInt(1, fileDTO.getWork_seq());

@@ -3,8 +3,7 @@ package com.mediabank.file;
 import com.mediabank.work.WorkDTO;
 
 public class FileDTO extends WorkDTO{
-private int file_num;
-	
+	private int file_num;
 	private String file_route;
 	private String width;
 	private String height;

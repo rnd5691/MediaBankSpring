@@ -57,7 +57,7 @@
 					</c:forEach>
 				</table>
 				
-				<a  id="btn" href="mypageSalesRequestWrite.mypage" class="btn btn-default">WRITE</a>
+				<a  id="btn" href="write" class="btn btn-default">WRITE</a>
 				
 				<c:if test="${makePage.totalPage > 0}">
 					<div class="paging">

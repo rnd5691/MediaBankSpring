@@ -53,12 +53,12 @@
 			<tr>
          		<c:if test="${file.file_kind eq 'image'}">
             		<td rowspan="9" colspan="2">
-						<img src="${pageContext.request.contextPath}/upload/${file.file_name}">
+						<img src="${pageContext.request.contextPath}/resources/upload/${file.file_name}">
 					</td>
 				</c:if>
 				<c:if test="${file.file_kind eq 'video'}">
 					<td rowspan="8" colspan="2">
-						<video src="${pageContext.request.contextPath}/upload/${file.file_name} " width="310" height="310" controls="controls"></video>
+						<video src="${pageContext.request.contextPath}/resources/upload/${file.file_name} " width="310" height="310" controls="controls"></video>
 					</td>
 				</c:if>
          	</tr>
