@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>작픔 수정</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -14,7 +14,22 @@
 <link href="${pageContext.request.contextPath}/resources/css/mypage/salesRequestView.css" rel="stylesheet">
 <script oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
 $(function(){
-
+	var fileKind = ${file.file_kind};
+	
+	if(fileKind == image){
+		$("#img").prop("rowspan", "10");
+		$("#img").prop("colspan", "2");
+		$("#image").css('display', 'block');
+		$("#video").css('display', 'none');
+		$("#image").prop("src", "${pageContext.request.contextPath}/resources/upload/${file.file_name}");
+	}else{
+		$("#img").prop("rowspan", "9");
+		$("#img").prop("colspan", "2");
+		$("#image").css('display', 'none');
+		$("#video").css('display', 'block');
+		$("#video").prop("src", "${pageContext.request.contextPath}/resources/upload/${file.file_name}");
+	}
+	
 	$("#salesRequestList").css('color', 'white');
 	$("#salesRequestList").css('background-color', '#83b14e');
 	var check = false;
@@ -42,11 +57,26 @@ $(function(){
 				
 			var reader = new FileReader();
 			reader.onload = function(rst){
-				$("#imagebox").prop("src", rst.target.result);
+				var file_name = $("#file").val();
+				var srt_num = file_name.indexOf(".")+1;
+				var kind = file_name.substring(srt_num);
+				if(kind=='jpg'||kind=='JPG'||kind=='png'||kind=='PNG'){
+					$("#image").prop("src", rst.target.result);
+					$("#image").show();
+					$("#video").hide();
+					$("#file_kind").prop("value", "image");
+				}else{
+					$("#video").prop("src", rst.target.result);
+					$("#video").show();
+					$("#image").hide();
+					$("#file_kind").prop("value","video");
+				}
+				alert($("#file_kind").val());
 			}
 			reader.readAsDataURL(file);
 			
 			img.src = _URL.createObjectURL(file);
+			
 			img.onload = function(){
 			 	$("#fileWidth").val(img.naturalWidth);
 				$("#fileHeight").val(img.naturalHeight);
@@ -89,23 +119,18 @@ $(function(){
 	</div>
 	<form id="frm" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="work_seq" value="${work.work_seq}">
-		<input type="hidden" name="file_kind" value="${file.file_kind}">
+		<input type="hidden" id="file_kind" name="file_kind" value="${file.file_kind}">
 		<table class="table">
 			 <tr>
-         		<c:if test="${file.file_kind eq 'image'}">
-            		<td rowspan="10" colspan="2">
-						<img src="${pageContext.request.contextPath}/upload/${file.file_name}">
-					</td>
-				</c:if>
-				<c:if test="${file.file_kind eq 'video'}">
-					<td rowspan="9" colspan="2">
-						<video src="${pageContext.request.contextPath}/upload/${file.file_name} " width="310" height="310" controls="controls"></video>
-					</td>
-				</c:if>
+			 	<td id="img">
+			 		<img id="image" />
+			 		<video id="video" width="310" height="310" controls="controls"></video>
+								 	
+			 	</td>
          	</tr>
 			<tr>
 				<td>작품명</td>
-				<td><input id="work"class="border" name="work" type="text" value="${work.work}"></td>
+				<td><input id="work"class="border" name="work" type="text" required="required" value="${work.work}"></td>
 			</tr>
 			<tr>
 				<td>승인현황</td>
@@ -113,38 +138,38 @@ $(function(){
 			</tr>
 			<tr>
 				<td>작가명</td>
-				<td><input name="nickname" type="text" readonly="readonly" value="${requestScope.work.nickname}"></td>
+				<td><input name="nickname" type="text" readonly="readonly" value="${work.nickname}"></td>
 			</tr>
 			<tr>
 				<td>등록 일자</td>
-				<td><input name="work_date" type="date" readonly="readonly" value="${requestScope.work.work_date }"></td>
+				<td><input name="work_date" type="date" readonly="readonly" value="${work.work_date }"></td>
 			</tr>
 			<tr>
 				<td>가격</td>
-				<td><input id="price" class="border" required="required" name="price" type="text" value="${requestScope.work.price}"></td>
+				<td><input id="price" class="border" required="required" name="price" type="text" value="${work.price}"></td>
 			</tr>
 			<tr>
 				<td>파일 업로드</td>
 				<td><input type="file" required="required" id="file" name="file"></td>
 			</tr>
-			<c:if test="${requestScope.file.file_kind eq 'image'}">
+			<c:if test="${file.file_kind eq 'image'}">
 		         <tr>
 		            <td>파일 사이즈</td>
-		            <td><input class="size" name="width" type="text" readonly="readonly" value="${requestScope.file.width }"> X <input class="size" name="height" type="text"readonly="readonly" value="${requestScope.file.height}"></td>
+		            <td><input id="fileWidth" class="size" name="width" type="text" readonly="readonly" value="${file.width }"> X <input id="fileHeight"class="size" name="height" type="text"readonly="readonly" value="${file.height}"></td>
 		         </tr>
 	     	</c:if>
 			<tr>
 				<td>상세 내용</td>
-				<td><textarea id="contents" required="required" class="border" name="contents">${requestScope.work.contents}</textarea></td>
+				<td><textarea id="contents" required="required" class="border" name="contents">${work.contents}</textarea></td>
 			</tr>
 			<tr>
 				<td>태그</td>
-				<td><textarea id="tag" required="required" class="border" name="tag">${requestScope.work.tag}</textarea></td>
+				<td><textarea id="tag" required="required" class="border" name="tag">${work.tag}</textarea></td>
 			</tr>
 		</table>
-		<c:if test="${!empty requestScope.work.reply}">
+		<c:if test="${!empty work.reply}">
 			<div class="reply">
-				<textarea name="reply" readonly="readonly">${requestScope.work.reply }</textarea>
+				<textarea name="reply" readonly="readonly">${work.reply }</textarea>
 			</div>		
 		</c:if>
 		<button id="update" class="bloat btn btn-default">UPDATE</button>
