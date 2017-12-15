@@ -3,31 +3,29 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-<script type="text/javascript">
-	$(function(){
-		<c:forEach items="${requestScope.file}" var="dto">
-		if(${dto.sell eq 'Y'}){
-			$("#" + ${dto.file_num}).prop("checked", true);
-		}else{
-			$("#" + ${dto.file_num}).prop("checked", false);
-		}
-	</c:forEach>
-	});
-</script>
-</head>
-<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<c:forEach items="${file}" var="dto">
+	
+	<c:if test="${dto.sell eq 'Y'}">
+		<script type="text/javascript">
+			 $("#" + '${dto.file_num}').prop("checked", true);
+		</script>
+	</c:if>
+	<c:if test="${dto.sell ne 'Y'}">
+		<script type="text/javascript">
+			$("#" + '${dto.file_num}').prop("checked", false);
+		</script>
+	</c:if>
+</c:forEach>
 <table>
-	   	<c:forEach items="${requestScope.file}" var="dto">
+	   	<c:forEach items="${file}" var="dto">
 	    <c:if test="${dto.file_kind eq 'image'}">
 				<tr class="trtable1">
 					<td class="tdtable1">
 						<input type="checkbox" class="img" name="view" id="${dto.file_num}" value="${dto.work_seq }">
 						<div class="images1">
 							<div>
-							<img src="${pageContext.request.contextPath}/upload/${dto.file_name}">
+							<img src="${pageContext.request.contextPath}/resources/upload/${dto.file_name}">
 							</div>
 						</div>
 					</td>
@@ -40,18 +38,17 @@
 		<div class="paging">
 			<ul class="pagination">
 				<c:if test="${makePage.curBlock>1}">
-					<li><a href="./mypageSalesRequestNow.mypage?curPage=1&file_kind=${file_kind}">&lt;&lt;</a></li>
-					<li><a href="./mypageSalesRequestNow.mypage?curPage=${makePage.startNum-1}&file_kind=${file_kind}">[이전]</a></li>
+					<li><a href="./salesRequestNow?curPage=1&file_kind=${file_kind}">&lt;&lt;</a></li>
+					<li><a href="./salesRequestNow?curPage=${makePage.startNum-1}&file_kind=${file_kind}">[이전]</a></li>
 				</c:if>
 				<c:forEach begin="${makePage.startNum}" end="${makePage.lastNum}" var="i">
-					<li><a href="./mypageSalesRequestNow.mypage?curPage=${i}&file_kind=${file_kind}">${i}</a></li>
+					<li><a href="./salesRequestNow?curPage=${i}&file_kind=${file_kind}">${i}</a></li>
 				</c:forEach>
 				<c:if test="${makePage.curBlock<makePage.totalBlock}">
-					<li><a href="./mypageSalesRequestNow.mypage?curPage=${makePage.lastNum+1}&file_kind=${file_kind}">[다음]</a></li>
-					<li><a href="./mypageSalesRequestNow.mypage?curPage=${makePage.totalPage}&file_kind=${file_kind}">&gt;&gt;</a></li>
+					<li><a href="./salesRequestNow?curPage=${makePage.lastNum+1}&file_kind=${file_kind}">[다음]</a></li>
+					<li><a href="./salesRequestNow?curPage=${makePage.totalPage}&file_kind=${file_kind}">&gt;&gt;</a></li>
 				</c:if>
 			</ul>
 		</div>
 	</c:if>	
-</body>
 </html>

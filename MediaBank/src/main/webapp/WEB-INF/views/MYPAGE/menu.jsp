@@ -20,7 +20,7 @@
 			<a id="buyList" class="btn btn-default" href="mypageBuyList.mypage">구매 목록</a>
 			<c:if test="${sessionScope.artist eq 'artist' }">
 				<a id="salesRequestList" class="btn btn-default" href="salesRequestList">내 작품 판매승인 요청 현황</a>
-				<a id="salesNow" class="btn btn-default" href="mypageSalesRequestNow.mypage">현재 판매 중인 내 작품</a>
+				<a id="salesNow" class="btn btn-default" href="salesRequestNow">현재 판매 중인 내 작품</a>
 				<a id="salesRequestMoney" class="btn btn-default" href="mypageSalesRequestMoney.mypage">작품 별 수익 현황</a>
 			</c:if>
 			<!-- Trigger the modal with a button -->

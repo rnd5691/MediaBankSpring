@@ -15,12 +15,14 @@ import com.mediabank.util.MakeRow;
 @Repository
 public class FileDAO {
 	//전체 작품 번호 가져오기
-		public List<Integer> work_seq(int user_num, String file_kind) throws Exception{
+		public List<Integer> work_seq(int user_num, String file_kind, MakeRow makeRow) throws Exception{
 			Connection con = DBConnector.getConnect();
-			String sql = "select w.work_seq from work_info w, file_table f where f.work_seq=w.work_seq and w.user_num=? and w.upload_check='승인' and f.file_kind=?";
+			String sql = "select * from (select rownum R, I.* from (select w.work_seq from work_info w, file_table f where f.work_seq=w.work_seq and w.user_num=? and w.upload_check='승인' and f.file_kind=?) I) where R between ? and ?";
 			PreparedStatement st = con.prepareStatement(sql);
 			st.setInt(1, user_num);
 			st.setString(2, file_kind);
+			st.setInt(3, makeRow.getStartRow());
+			st.setInt(4, makeRow.getLastRow());
 			ResultSet rs = st.executeQuery();
 			List<Integer> ar = new ArrayList<Integer>();
 			while(rs.next()){

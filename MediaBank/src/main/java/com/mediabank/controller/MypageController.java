@@ -26,9 +26,65 @@ public class MypageController {
 	@Autowired
 	private MypageService mypageService;
 	//--------------<현재 판매중인 내 작품>-----------
-	@RequestMapping(value="salesRequestNow", method=RequestMethod.GET)
-	public void salesRequestNow() {
+	@RequestMapping("salesRequestNowUpload")
+	public String saelsRequestNowUpload(RedirectAttributes ra,HttpSession session,String[] view,String file_kind) {
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path = null;
+		if(memberDTO == null) {
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else {
+			int result=0;
+			try {
+				result = mypageService.saelsRequestNowUpdate(session, memberDTO, view, file_kind);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(result==0) {
+				ra.addFlashAttribute("message", "변경 사항이 저장되지 않았습니다.");
+			}
+			path="redirect:salesRequestNow?file_kind="+file_kind;
+		}
 		
+		return path;
+	}
+	@RequestMapping("salesRequestNowAdd")
+	public String saelsRequestNowAdd(@RequestParam(defaultValue="1")int curPage,Model model,RedirectAttributes ra,HttpSession session,@RequestParam(defaultValue="image")String file_kind){
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path = null;
+		if(memberDTO == null) {
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else {
+			try {
+				mypageService.saelsRequestNowAdd(session,model,curPage, file_kind, memberDTO.getUser_num());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			path = "MYPAGE/add/"+file_kind+"Add";
+		}
+		return path;
+	}
+	@RequestMapping("salesRequestNow")
+	public String salesRequestNow(@RequestParam(defaultValue="1")int curPage,Model model,RedirectAttributes ra,HttpSession session,@RequestParam(defaultValue="image")String file_kind) {
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path=null;
+		if(memberDTO==null) {
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else {
+			try {
+				mypageService.salesRequestNowForm(session,model, curPage, file_kind, memberDTO);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			path = "MYPAGE/salesRequestNow";
+		}
+		return path;
 	}
 	//--------------<내 작품 승인 현황>--------------
 	@RequestMapping(value="viewDelete")

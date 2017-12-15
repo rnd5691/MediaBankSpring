@@ -17,20 +17,24 @@
 var file_kind = "${file_kind}";
 var user_num = "${user_num}";
 $(function(){
+	var message = '${message}';
+	if(message != ""){
+		alert(message);
+	}
 	if(file_kind == "image")	{
 		$("#li_image").addClass("active");
 		$("#li_video").removeClass("active");
 		$("#image").addClass("in active");
-		$("#image").load('salesRequestNowAdd.mypage?file_kind='+file_kind);
+		$("#image").load('salesRequestNowAdd?file_kind='+file_kind);
 	}else if(file_kind == "video"){
 		$("#li_video").addClass("active");
 		$("#li_image").removeClass("active");
 		$("#video").addClass("in active");
-		$("#video").load('salesRequestNowAdd.mypage?file_kind='+file_kind);
+		$("#video").load('salesRequestNowAdd?file_kind='+file_kind);
 	}
 	
 	$("#button").click(function(){
-		document.frm.action="mypageSalesRequestNowUpdate.mypage?file_kind=${file_kind}";
+		document.frm.action="salesRequestNowUpload";
 		document.frm.method="POST";
 		document.frm.submit();
 	});
@@ -43,7 +47,7 @@ function fn_tabClick(tabId){
 	}else if(tabId == 'youngsang')	{
 		$("#file_kind").val("video");
 	}
-	document.frm.action="mypageSalesRequestNow.mypage";
+	document.frm.action="salesRequestNow";
 	document.frm.method="POST";
 	document.frm.submit();
 }
@@ -72,7 +76,7 @@ $(function(){
 			<h1>My Page</h1>&nbsp;&nbsp;<h5>현재 판매 중인 내 작품</h5>
 		</div>
 		<div class="imagebody">
-			<input type="hidden" id="file_kind" name="file_kind">
+			<input type="hidden" id="file_kind" name="file_kind" value="${file_kind}">
 			<div class="container">
 		  		<ul class="nav nav-tabs">
 	    			<li id="li_image" class="active"><a data-toggle="tab" href="#image" onclick="fn_tabClick('sajin')">이미지</a></li>

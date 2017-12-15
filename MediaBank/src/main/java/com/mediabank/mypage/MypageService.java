@@ -25,7 +25,10 @@ import com.mediabank.member.MemberDTO;
 import com.mediabank.person.PersonDAO;
 import com.mediabank.person.PersonDTO;
 import com.mediabank.util.DBConnector;
+import com.mediabank.util.MakePage;
+import com.mediabank.util.MakeRow;
 import com.mediabank.util.PageMaker;
+import com.mediabank.util.salesPageMaker;
 import com.mediabank.work.WorkDAO;
 import com.mediabank.work.WorkDTO;
 
@@ -41,6 +44,131 @@ public class MypageService {
 	private WorkDAO workDAO;
 	@Autowired
 	private FileDAO fileDAO;
+	//---------<현재 판매중인 내 작품>-----
+	public int saelsRequestNowUpdate(HttpSession session,MemberDTO memberDTO,String [] view,String file_kind) throws Exception{
+		List<Integer> checkWork_seq = new ArrayList<Integer>();//체크가 된 작품들
+		List<Integer> ncheckWork_seq = new ArrayList<Integer>(); //체크가 안된 작품들
+		List<Integer> totalWork_seq = null; //전체 작품
+		MakeRow makeRow = (MakeRow)session.getAttribute("makeRow");
+		Connection con = null;
+		int result = 0;
+		try {
+			//문자열로 되어있는 체크된 작품 번호를 숫자로 변환
+			for(int i=0; i<view.length; i++) {
+				int work_seq = Integer.parseInt(view[i]);
+				checkWork_seq.add(work_seq);
+			}
+			
+			totalWork_seq = fileDAO.work_seq(memberDTO.getUser_num(), file_kind, makeRow);
+			System.out.println("[전체 work_seq]");
+			for(int i=0; i<totalWork_seq.size(); i++) {
+				System.out.print(totalWork_seq.get(i)+", ");
+			}
+			System.out.println();
+			System.out.println("[체크 된 work_seq]");
+			for(int i=0; i<checkWork_seq.size(); i++) {
+				System.out.print(checkWork_seq.get(i)+", ");
+			}
+			System.out.println();
+			
+			int ch=0;
+			for(int i=0; i<totalWork_seq.size(); i++) {
+				boolean check = true;
+				System.out.println("i:"+i+", totalWork_seq : "+totalWork_seq.get(i));
+				for(int j=ch; j<checkWork_seq.size(); j++) {
+					System.out.println("j:"+j+", checkWork_seq : "+checkWork_seq.get(j));
+					ch++;
+					if(checkWork_seq.get(j).equals(totalWork_seq.get(i))) {
+						System.out.println("이리로 옴");
+						check = false;
+						break;
+					}else {
+						System.out.println("요기로 옴");
+						check = true;
+					}
+					if(ch==checkWork_seq.size()) {
+						ch=0;
+					}
+				}
+				if(check) {
+					ncheckWork_seq.add(totalWork_seq.get(i));
+				}
+			}
+			/*for(int i=0; i<checkWork_seq.size(); i++) {
+				System.out.println("i:"+i+", checkWork_seq : "+checkWork_seq.get(i));
+				for(int j=ch; j<totalWork_seq.size(); j++) {
+					System.out.println("j:"+j+", totalWork_seq : "+totalWork_seq.get(j));
+					ch++;
+					if(checkWork_seq.get(i).equals(totalWork_seq.get(j))){
+						System.out.println("이리로 옴");
+						break;
+					}else{
+						System.out.println("휴");
+						ncheckWork_seq.add(totalWork_seq.get(j));
+					}
+				}
+			}*/
+			System.out.println("[not check]");
+			for(int i=0; i<ncheckWork_seq.size(); i++) {
+				System.out.print(ncheckWork_seq.get(i)+", ");
+			}
+			
+		}catch(Exception e) {
+			//체크된 값이 없을 경우 진행
+			ncheckWork_seq = fileDAO.work_seq(memberDTO.getUser_num(), file_kind, makeRow);
+			e.printStackTrace();
+		}
+		
+		try {
+			con = DBConnector.getConnect();
+			con.setAutoCommit(false);
+			//체크된 작품들 판매 상태 바꾸기
+			if(checkWork_seq != null) {
+				for(int work : checkWork_seq) {
+					result = workDAO.sellUpdate(con, work, "Y");
+				}
+			}
+			System.out.println();
+			//미체크된 작품들 판매 상태 바꾸기
+			if(ncheckWork_seq != null) {
+				for(int work : ncheckWork_seq) {
+					result = workDAO.sellUpdate(con, work, "N");
+				}
+			}
+			con.commit();
+		}catch(Exception e) {
+			con.rollback();
+			e.printStackTrace();
+		}finally {
+			con.setAutoCommit(true);
+			con.close();
+		}
+		
+		return result;
+	}
+	public void saelsRequestNowAdd(HttpSession session,Model model,int curPage,String file_kind,int user_num) throws Exception{
+		MakePage makePage = (MakePage)session.getAttribute("makePage");
+		MakeRow makeRow = (MakeRow)session.getAttribute("makeRow");
+		
+		List<FileDTO> imageAr = fileDAO.selectNow(user_num, file_kind, makeRow);
+		List<FileDTO> videoAr = fileDAO.selectNow(user_num, file_kind, makeRow);
+		
+		model.addAttribute("file", imageAr);
+		model.addAttribute("video", videoAr);
+		model.addAttribute("file_kind", file_kind);
+		model.addAttribute("user_num", user_num);
+		model.addAttribute("makePage", makePage);
+		
+		
+	}
+	public void salesRequestNowForm(HttpSession session,Model model,int curPage,String file_kind, MemberDTO memberDTO) throws Exception{
+		int totalCount = fileDAO.getTotalCount(memberDTO.getUser_num(), file_kind);
+		salesPageMaker pageMaker = new salesPageMaker(curPage, totalCount);	
+		session.setAttribute("makePage", pageMaker.getMakePage());
+		session.setAttribute("makeRow", pageMaker.getMakeRow());
+		
+		model.addAttribute("file_kind", file_kind);
+	}
 	//---------<내 작품 판매승인 요청 현황>---
 	public void viewDelete(HttpSession session,int work_seq) throws Exception{
 		Connection con = null;
