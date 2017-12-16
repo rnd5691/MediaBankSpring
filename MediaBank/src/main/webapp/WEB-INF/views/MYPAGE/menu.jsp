@@ -4,7 +4,7 @@
 <script>
 	$(function(){
 		$("#yes").click(function(){
-			if(${member.token eq null}){
+			if(${member.token}==null){
 				location.href = "DropOut.mypage";
 			}else{
 				location.href = "naverDropOut.mypage";
@@ -21,7 +21,7 @@
 			<c:if test="${sessionScope.artist eq 'artist' }">
 				<a id="salesRequestList" class="btn btn-default" href="salesRequestList">내 작품 판매승인 요청 현황</a>
 				<a id="salesNow" class="btn btn-default" href="salesRequestNow">현재 판매 중인 내 작품</a>
-				<a id="salesRequestMoney" class="btn btn-default" href="mypageSalesRequestMoney.mypage">작품 별 수익 현황</a>
+				<a id="salesRequestMoney" class="btn btn-default" href="salesRequestMoney">작품 별 수익 현황</a>
 			</c:if>
 			<!-- Trigger the modal with a button -->
 			<button class="btn btn-default"data-toggle="modal" data-target="#session">탈퇴하기</button>

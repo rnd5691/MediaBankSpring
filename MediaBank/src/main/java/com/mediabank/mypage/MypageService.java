@@ -44,6 +44,22 @@ public class MypageService {
 	private WorkDAO workDAO;
 	@Autowired
 	private FileDAO fileDAO;
+	//--------------<작품 별 수익 현황>-------------
+	public void salesRequestMoney(Model model,int curPage, MemberDTO memberDTO) throws Exception{
+		int user_num = memberDTO.getUser_num();
+		int totalCount = workDAO.getTotalCount(user_num, "승인");
+		int workTotalCount = workDAO.getTotalCount(user_num);
+		
+		PageMaker pageMaker = new PageMaker(curPage, totalCount);
+		
+		List<WorkDTO> ar = workDAO.MoneySelectList(user_num, pageMaker.getMakeRow());
+		int totalMoney = workDAO.totalMoney(user_num);
+		
+		model.addAttribute("totalMoney", totalMoney);
+		model.addAttribute("workTotal", workTotalCount);
+		model.addAttribute("list", ar);
+		model.addAttribute("makePage", pageMaker.getMakePage());
+	}
 	//---------<현재 판매중인 내 작품>-----
 	public int saelsRequestNowUpdate(HttpSession session,MemberDTO memberDTO,String [] view,String file_kind) throws Exception{
 		List<Integer> checkWork_seq = new ArrayList<Integer>();//체크가 된 작품들

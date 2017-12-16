@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+.qnaTitle{
+	border-bottom: 1px solid #747474;
+	color : #83b14e;
+	margin-bottom: 20px;
+}
+.qnaTitle>h1, .qnaTitle>h4{
+	display: inline-block;
+}
+.qnaTitle>h1>a{
+	color : #83b14e;
+}
+
+.table-title{
+	background-color: #83b14e;
+	color : white;
+	font-weight: bold;
+	text-align: center;
+}
+
+.title{
+	width : 431px;
+}
+.writer{
+	width : 282px;
+}
+
+textarea{
+	resize: none;
+	width : 100%;
+	height: 400px;
+}
+#btn{
+	text-align: center;
+	margin-bottom: 20px;
+}

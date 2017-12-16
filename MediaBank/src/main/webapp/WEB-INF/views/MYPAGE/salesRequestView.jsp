@@ -111,6 +111,12 @@
 <div class="push"></div>
 </div>
 </c:if>
+<c:if test="${empty requestScope.work}">
+	<script type="text/javascript">
+		alert('해당하는 번호가 없습니다.');
+		location.href="salesRequestList";
+	</script>
+</c:if>
 <!-- contents finish -->
 
 <!-- footer start -->

@@ -1,0 +1,36 @@
+@CHARSET "UTF-8";
+.qnaTitle{
+	border-bottom: 1px solid #747474;
+	color : #83b14e;
+	margin-bottom: 20px;
+}
+.qnaTitle>h1>a{
+	color : #83b14e;
+}
+.search{
+	margin-bottom: 10px;
+}
+table{
+	text-align: center;
+}
+.table-title{
+	background-color: #83b14e;
+	color : white;
+	font-weight: bold;
+}
+.table-hover>tbody>.table-title:hover{
+	background-color: #83b14e;
+}
+
+.paging{
+	width : 700px;
+	margin : 0 auto;
+	text-align: center;
+}
+#btn{
+	float : right;
+}
+.title_contents{
+	width: 340px;
+}
+

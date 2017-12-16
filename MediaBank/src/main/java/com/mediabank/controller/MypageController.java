@@ -25,6 +25,25 @@ import com.mediabank.work.WorkDTO;
 public class MypageController {
 	@Autowired
 	private MypageService mypageService;
+	//--------------<작품 별 수익 현황>-------------
+	@RequestMapping("salesRequestMoney")
+	public String salesRequestMoney(RedirectAttributes ra,Model model,@RequestParam(defaultValue="1")int curPage, HttpSession session) {
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path = null;
+		if(memberDTO == null) {
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else {
+			try {
+				mypageService.salesRequestMoney(model, curPage, memberDTO);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			path="MYPAGE/salesRequestMoney";
+		}
+		return path;
+	}
 	//--------------<현재 판매중인 내 작품>-----------
 	@RequestMapping("salesRequestNowUpload")
 	public String saelsRequestNowUpload(RedirectAttributes ra,HttpSession session,String[] view,String file_kind) {

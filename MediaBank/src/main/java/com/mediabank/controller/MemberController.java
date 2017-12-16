@@ -43,7 +43,7 @@ public class MemberController {
 		}
 		ra.addFlashAttribute("message", message);
 		if(memberDTO.getKind().equals("admin")){
-			path = "redirect:../MediaBank/main";
+			path = "redirect:../qna/qnaList";
 		}else{
 			path = "redirect:../MediaBank/main";
 		}
