@@ -14,6 +14,30 @@ import com.mediabank.util.MakeRow;
 
 @Repository
 public class QnaDAO {
+	
+	public QnaDTO searchQna_seq(int qna_seq) throws Exception{
+		Connection con = DBConnector.getConnect();
+		String sql = "select * from qna where qna_seq=?";
+		PreparedStatement st = con.prepareStatement(sql);
+		
+		st.setInt(1, qna_seq);
+		
+		ResultSet rs = st.executeQuery();
+		QnaDTO qnaDTO = null;
+		while(rs.next()) {
+			qnaDTO = new QnaDTO();
+			qnaDTO.setContents(rs.getString("contents"));
+			qnaDTO.setQna_seq(rs.getInt("qna_seq"));
+			qnaDTO.setReg_date(rs.getDate("reg_date"));
+			qnaDTO.setReply(rs.getString("reply"));
+			qnaDTO.setReply_check(rs.getString("reply_check"));
+			qnaDTO.setTitle(rs.getString("title"));
+		}
+		
+		DBConnector.disConnect(rs, st, con);
+		
+		return qnaDTO;
+	}
 	public int replyUpdate(QnaDTO qnaDTO) throws Exception{
 		Connection con = DBConnector.getConnect();
 		String sql = "update qna set reply_check='답변 완료', reply=? where qna_seq=?";
@@ -164,6 +188,7 @@ public class QnaDAO {
 		return ar;
 		
 	}
+	
 	public int getTotalCount(String kind, String search) throws Exception{
 		Connection con = DBConnector.getConnect();
 		String sql = "select nvl(count(qna_seq), 0) from qna where "+kind+" like ?";

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mediabank.company.CompanyDAO;
 import com.mediabank.member.MemberDTO;
@@ -22,6 +23,20 @@ public class QnaService {
 	@Autowired
 	private PersonDAO personDAO;
 	
+	public int qnaUpdate(QnaDTO qnaDTO) throws Exception{
+		return qnaDAO.update(qnaDTO);
+	}
+	public int qnaDelete(RedirectAttributes ra,int qna_seq) throws Exception{
+		QnaDTO qnaDTO = qnaDAO.searchQna_seq(qna_seq);
+		int result = 0;
+		if(qnaDTO==null) {
+			ra.addFlashAttribute("message", "해당 하는 번호가 존재하지 않습니다.");
+			result = -1;
+		}else {
+			result = qnaDAO.delete(qna_seq);
+		}
+		return result;
+	}
 	public int qnaReplyUpdate(QnaDTO qnaDTO) throws Exception{
 		return qnaDAO.replyUpdate(qnaDTO);
 	}
@@ -34,15 +49,6 @@ public class QnaService {
 		return qnaDAO.insert(qnaDTO, user_num);
 	}
 	
-	public void qnaWriteForm(Model model,MemberDTO memberDTO) throws Exception{
-		String writer = null;
-		if(memberDTO.getKind().equals("company")) {
-			writer = companyDAO.selectWriter(memberDTO.getUser_num());
-		}else {
-			writer = personDAO.selectWriter(memberDTO.getUser_num());
-		}
-		model.addAttribute("writer", writer);
-	}
 	public void qnaList(Model model,HttpSession session,int curPage, String kind, String search) throws Exception{
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		if(kind.equals("writer")) {

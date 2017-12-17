@@ -21,6 +21,7 @@ public class MemberService {
 	private CompanyDAO companyDAO;
 	@Autowired
 	private PersonDAO personDAO;
+
 	/*
 	  -------------------------------------------------
 	  [로그인]
@@ -31,6 +32,13 @@ public class MemberService {
 		if(memberDTO != null){
 			session.setAttribute("member", memberDTO);
 			message = memberDTO.getId()+"님 어서오세요.";
+			String writer = null;
+			if(memberDTO.getKind().equals("company")) {
+				writer = companyDAO.selectWriter(memberDTO.getUser_num());
+			}else {
+				writer = personDAO.selectWriter(memberDTO.getUser_num());
+			}
+			session.setAttribute("writer", writer);
 		}
 		
 		return message;

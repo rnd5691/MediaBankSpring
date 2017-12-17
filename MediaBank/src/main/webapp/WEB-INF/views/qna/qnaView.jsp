@@ -75,7 +75,7 @@
 			<c:if test="${sessionScope.writer eq qna.writer }">
 				<div class="button">
 					<button class="btn btn-default">수정</button>
-					<a href="./qnaDelete.qna?qna_seq=${qna.qna_seq}"class="btn btn-default">삭제</a>
+					<a href="./qnaDelete?qna_seq=${qna.qna_seq}"class="btn btn-default">삭제</a>
 				</div>	
 			</c:if>
 				

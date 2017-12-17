@@ -20,13 +20,71 @@ public class QnaController {
 	@Autowired
 	private QnaService qnaService;
 	
+	@RequestMapping(value="qnaUpdate", method=RequestMethod.POST)
+	public String qnaUpdate(RedirectAttributes ra,QnaDTO qnaDTO) {
+		int result=0;
+		try {
+			result=qnaService.qnaUpdate(qnaDTO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(result>0) {
+			ra.addFlashAttribute("message","수정 완료 되었습니다.");
+		}else {
+			ra.addFlashAttribute("message","수정 실패 하였습니다.");
+		}
+		
+		return "redirect:qnaList";
+	}
+	@RequestMapping(value="qnaUpdate", method=RequestMethod.GET)
+	public String qnaUpdateForm(Model model,QnaDTO qnaDTO,HttpSession session,RedirectAttributes ra) {
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path=null;
+		if(memberDTO==null || memberDTO.getKind().equals("admin")) {
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else {
+			model.addAttribute("qna",qnaDTO);
+			path = "qna/qnaUpdate";
+		}
+		
+		return path;
+	}
+	@RequestMapping("qnaDelete")
+	public String qnaDelete(RedirectAttributes ra,HttpSession session, int qna_seq) {
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path=null;
+		if(memberDTO==null || memberDTO.getKind().equals("admin")) {
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else {
+			
+			int result = 0;
+			try {
+				result = qnaService.qnaDelete(ra, qna_seq);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(result!=-1) {
+				if(result>0) {
+					ra.addFlashAttribute("message", "해당 게시판을 삭제하였습니다.");
+				}else {
+					ra.addFlashAttribute("message", "게시판 삭제를 실패하였습니다.");
+				}				
+			}
+			path = "redirect:qnaList";
+		}
+		return path;
+	}
 	@RequestMapping("qnaReplyUpdate")
 	public String qnaReplyUpdate(RedirectAttributes ra,HttpSession session, QnaDTO qnaDTO) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path=null;
 		if(memberDTO==null || !memberDTO.getKind().equals("admin")) {
 			ra.addAttribute("message", "잘못된 접근 방식입니다.");
-			path = "redirect:MediaBanck/main";
+			path = "redirect:../MediaBanck/main";
 		}else {
 			int result = 0;
 			try {
@@ -86,12 +144,6 @@ public class QnaController {
 				path = "redirect:../qna/qnaList";
 			}
 		}else {
-			try {
-				qnaService.qnaWriteForm(model, memberDTO);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			path = "qna/qnaWrite";
 		}
 		return path;
