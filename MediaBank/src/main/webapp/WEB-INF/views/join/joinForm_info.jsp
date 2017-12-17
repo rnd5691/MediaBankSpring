@@ -136,6 +136,7 @@
 				if(ch==false){
 					alert("ID 나 비밀번호를 확인 하십시오.");
 				}else{
+					$("#btn").prop("type", "submit");
 					document.frm.setAttribute('action', 'join');
 				}
 			}
@@ -188,7 +189,7 @@
 				</table>
 				<div>
 					<a href="kind" class="btn btn-default">취소</a>
-					<button id="btn" class="btn btn-default">확인</button>
+					<button type="button"id="btn" class="btn btn-default">확인</button>
 				</div>
 			</form>
 		</article>

@@ -1,11 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<script>
+<html>
+<script type="text/javascript">
 	$(function(){
 		$("#yes").click(function(){
-			if(${member.token}==null){
-				location.href = "DropOut.mypage";
+			if(${member.token eq null}){
+				location.href = "DropOut";
 			}else{
 				location.href = "naverDropOut.mypage";
 			}
@@ -50,3 +51,4 @@
 					      </div>
 					    </div>
 					  </div>
+</html>

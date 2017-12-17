@@ -44,6 +44,32 @@ public class MypageService {
 	private WorkDAO workDAO;
 	@Autowired
 	private FileDAO fileDAO;
+	//--------------<탈퇴하기>-----------------
+	public int dropOut(MemberDTO memberDTO) throws Exception{
+		int result = 0;
+		Connection con = null;
+		try {
+			con = DBConnector.getConnect();
+			con.setAutoCommit(false);
+			//회원 탈퇴 정보 추가
+			result = memberDAO.dropOut(memberDTO.getUser_num(), con);
+			//탈퇴 회원 작품이 있는지 확인
+			int work = workDAO.workTotalCount(memberDTO.getUser_num());
+			//작품이 있을 경우 판매유무를 모두 N으로 변경
+			if(work>0) {
+				result = workDAO.dropOut(memberDTO.getUser_num(), con);
+			}
+			con.commit();
+		}catch(Exception e) {
+			con.rollback();
+			e.printStackTrace();
+		}finally {
+			con.setAutoCommit(true);
+			con.close();
+		}
+		
+		return result;
+	}
 	//--------------<작품 별 수익 현황>-------------
 	public void salesRequestMoney(Model model,int curPage, MemberDTO memberDTO) throws Exception{
 		int user_num = memberDTO.getUser_num();

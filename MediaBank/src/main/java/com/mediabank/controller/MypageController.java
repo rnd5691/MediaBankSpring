@@ -25,6 +25,32 @@ import com.mediabank.work.WorkDTO;
 public class MypageController {
 	@Autowired
 	private MypageService mypageService;
+	//--------------<탈퇴하기>-----------------
+	@RequestMapping("DropOut")
+	public String dropOut(Model model,RedirectAttributes ra,HttpSession session) {
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path = null;
+		if(memberDTO == null) {
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else {
+			int result=0;
+			try {
+				result = mypageService.dropOut(memberDTO);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(result>0) {
+				ra.addFlashAttribute("message","탈퇴 되셨습니다. 그동안 Media Bank를 이용해주셔서 감사합니다.");
+				session.invalidate();
+			}else {
+				ra.addFlashAttribute("message","탈퇴 실패하였습니다. 반복될 시에 관리자에게 문의해주시기 바랍니다.");
+			}
+			path = "redirect:../MediaBank/main";
+		}
+		return path;
+	}
 	//--------------<작품 별 수익 현황>-------------
 	@RequestMapping("salesRequestMoney")
 	public String salesRequestMoney(RedirectAttributes ra,Model model,@RequestParam(defaultValue="1")int curPage, HttpSession session) {
