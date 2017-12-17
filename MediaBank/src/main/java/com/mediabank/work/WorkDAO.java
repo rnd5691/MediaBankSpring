@@ -36,7 +36,7 @@ public class WorkDAO {
 			ResultSet rs = st.executeQuery();
 			boolean check = true;
 			if(rs.next()){
-				if(rs.getString("upload_check").equals("대기중")){
+				if(rs.getString("upload_check").equals("대기중")||rs.getString("upload_check").equals("거부")){
 					check = true;
 				}else{
 					check = false;

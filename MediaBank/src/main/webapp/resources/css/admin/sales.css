@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+.totalbody{
+	width: 100%;
+}
+.button{
+	height: 35px;
+	margin-bottom: 10px;
+}
+#reply_div>textarea {
+	width: 100%;
+	height: 200px;
+}

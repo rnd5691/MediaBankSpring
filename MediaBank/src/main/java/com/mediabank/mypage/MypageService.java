@@ -110,20 +110,6 @@ public class MypageService {
 					ncheckWork_seq.add(totalWork_seq.get(i));
 				}
 			}
-			/*for(int i=0; i<checkWork_seq.size(); i++) {
-				System.out.println("i:"+i+", checkWork_seq : "+checkWork_seq.get(i));
-				for(int j=ch; j<totalWork_seq.size(); j++) {
-					System.out.println("j:"+j+", totalWork_seq : "+totalWork_seq.get(j));
-					ch++;
-					if(checkWork_seq.get(i).equals(totalWork_seq.get(j))){
-						System.out.println("이리로 옴");
-						break;
-					}else{
-						System.out.println("휴");
-						ncheckWork_seq.add(totalWork_seq.get(j));
-					}
-				}
-			}*/
 			System.out.println("[not check]");
 			for(int i=0; i<ncheckWork_seq.size(); i++) {
 				System.out.print(ncheckWork_seq.get(i)+", ");
@@ -186,6 +172,12 @@ public class MypageService {
 		model.addAttribute("file_kind", file_kind);
 	}
 	//---------<내 작품 판매승인 요청 현황>---
+	public int adminReplyUpdate(WorkDTO workDTO) throws Exception{
+		return workDAO.replyUpdate(workDTO);
+	}
+	public int adminApprovalUpdate(int work_seq) throws Exception{
+		return workDAO.approvalUpdate(work_seq);
+	}
 	public void viewDelete(HttpSession session,int work_seq) throws Exception{
 		Connection con = null;
 		try{

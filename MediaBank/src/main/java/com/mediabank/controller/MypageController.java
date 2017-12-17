@@ -106,6 +106,44 @@ public class MypageController {
 		return path;
 	}
 	//--------------<내 작품 승인 현황>--------------
+	@RequestMapping(value="adminSalesRequestUpdate", method=RequestMethod.POST)
+	public String adminSalesReplyUpdate(RedirectAttributes ra,WorkDTO workDTO) {
+		int result = 0;
+		try {
+			result = mypageService.adminReplyUpdate(workDTO);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(result==0) {
+			ra.addFlashAttribute("message","업데이트를 실패 하였습니다.");
+		}
+		return "admin/salesRequestList";
+	}
+	@RequestMapping(value="adminSalesRequestUpdate", method=RequestMethod.GET)
+	public String adminSalesApprovalUpdate(RedirectAttributes ra,HttpSession session, WorkDTO workDTO) {
+		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
+		String path = null;
+		if(memberDTO==null){
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
+		}else{			
+			int result = 0;
+			try {
+				result = mypageService.adminApprovalUpdate(workDTO.getWork_seq());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(result==0) {
+				ra.addFlashAttribute("message","업데이트를 실패 하였습니다.");
+			}
+			
+			path="redirect:salesRequestList";
+		}
+		return path;
+	}
 	@RequestMapping(value="viewDelete")
 	public String delete(RedirectAttributes ra,HttpSession session,int work_seq){
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
@@ -201,14 +239,13 @@ public class MypageController {
 			boolean check = false;
 			try {
 				check=mypageService.salesRequestView(model, work_seq);
-				
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
 			if(memberDTO.getKind().equals("admin")) {
-				
+				path = "admin/salesRequestView";
 			}else {
 				if(!check) {
 					ra.addFlashAttribute("message","이미 관리가 완료 된 작품입니다.");
@@ -231,12 +268,15 @@ public class MypageController {
 			List<WorkDTO> ar = null;
 			try {
 				ar = mypageService.salesRequestList(model, curPage, memberDTO);
-				
 				model.addAttribute("list", ar);
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
-			path = "MYPAGE/salesRequestList";
+			if(memberDTO.getKind().equals("admin")) {
+				path = "admin/salesRequestList";
+			}else {
+				path = "MYPAGE/salesRequestList";				
+			}
 		}
 		return path;
 	}
