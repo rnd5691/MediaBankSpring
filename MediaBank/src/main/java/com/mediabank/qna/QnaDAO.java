@@ -163,7 +163,14 @@ public class QnaDAO {
 	}
 	
 	public List<QnaDTO> selectList(MakeRow makeRow, String kind, String search) throws Exception	{
-		Connection con = DBConnector.getConnect();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("kind", kind);
+		map.put("search", search);
+		map.put("startRow", makeRow.getStartRow());
+		map.put("lastRow", makeRow.getLastRow());
+		
+		return sqlSession.selectList(NAMESAPCE+".selectList", map);
+		/*Connection con = DBConnector.getConnect();
 		String sql = "select * from "
 			+	"(select rownum R, Q.* from "
 			+   "(select * from qna where "+kind+" like ? order by qna_seq desc) Q) "
@@ -193,7 +200,7 @@ public class QnaDAO {
 			ar.add(qnaDTO);
 		}
 		DBConnector.disConnect(rs, st, con);
-		return ar;
+		return ar;*/
 		
 	}
 	
@@ -203,17 +210,5 @@ public class QnaDAO {
 		map.put("search", search);
 		
 		return sqlSession.selectOne(NAMESAPCE+".getTotalCount", map);
-		/*Connection con = DBConnector.getConnect();
-		String sql = "select nvl(count(qna_seq), 0) from qna where "+kind+" like ?";
-		PreparedStatement st = con.prepareStatement(sql);
-		
-		st.setString(1, "%"+search+"%");
-		ResultSet rs = st.executeQuery();
-		rs.next();
-		int result = rs.getInt(1);
-		
-		DBConnector.disConnect(rs, st, con);
-		
-		return result;*/
 	}
 }

@@ -3,6 +3,7 @@ package com.mediabank.qna;
 import java.sql.Date;
 
 public class QnaDTO {
+	private int user_num;
 	private int qna_seq;
 	private String title;
 	private String writer;
@@ -11,6 +12,12 @@ public class QnaDTO {
 	private String reply_check;
 	private String reply;
 	
+	public int getUser_num() {
+		return user_num;
+	}
+	public void setUser_num(int user_num) {
+		this.user_num = user_num;
+	}
 	public int getQna_seq() {
 		return qna_seq;
 	}

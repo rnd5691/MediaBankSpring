@@ -6,5 +6,11 @@
  	<select id="getTotalCount" parameterType="java.util.HashMap" resultType="int">
  		select nvl(count(qna_seq), 0) from qna where #{kind} like '%'||#{search}||'%'
  	</select>
+ 	<select id="selectList" parameterType="java.util.HashMap" resultType="int">
+ 		select * from 
+		(select rownum R, Q.* from 
+		(select * from qna where #{kind} like '%'||#{search}||'%' order by qna_seq desc) Q) 
+		where R between #{startRow} and #{lastRow}
+ 	</select>
 </mapper>
 

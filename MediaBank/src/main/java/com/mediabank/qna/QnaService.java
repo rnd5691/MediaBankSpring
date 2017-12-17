@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mediabank.company.CompanyDAO;
+import com.mediabank.member.MemberDAO;
 import com.mediabank.member.MemberDTO;
 import com.mediabank.person.PersonDAO;
 import com.mediabank.util.PageMaker;
@@ -22,7 +23,8 @@ public class QnaService {
 	private CompanyDAO companyDAO;
 	@Autowired
 	private PersonDAO personDAO;
-	
+	@Autowired
+	private MemberDAO memberDAO;
 	public int qnaUpdate(QnaDTO qnaDTO) throws Exception{
 		return qnaDAO.update(qnaDTO);
 	}
@@ -76,7 +78,10 @@ public class QnaService {
 		}else {
 			ar = qnaDAO.selectList(pageMaker.getMakeRow(), kind, search);
 		}
-		
+		for(QnaDTO qnaDTO : ar) {
+			String member_kind = memberDAO.searchKind(qnaDTO.getUser_num());
+			qnaDTO.setWriter(memberDAO.searchNickName(qnaDTO.getUser_num(), member_kind));
+		}
 		model.addAttribute("list", ar);
 		model.addAttribute("kind", kind);
 		model.addAttribute("search", search);

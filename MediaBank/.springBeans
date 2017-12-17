@@ -8,7 +8,6 @@
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
 		<config>src/main/java/com/mediabank/qna/QnaMapper.xml</config>
-		<config>src/main/resources/mybatis-config.xml</config>
 	</configs>
 	<autoconfigs>
 		<config>src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml</config>
