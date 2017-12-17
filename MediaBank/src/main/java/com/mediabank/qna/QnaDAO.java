@@ -4,8 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mediabank.member.MemberDAO;
@@ -14,6 +18,10 @@ import com.mediabank.util.MakeRow;
 
 @Repository
 public class QnaDAO {
+	@Autowired
+	private SqlSession sqlSession;
+	
+	private static final String NAMESAPCE = "com.mediabank.qna.QnaMapper";
 	
 	public QnaDTO searchQna_seq(int qna_seq) throws Exception{
 		Connection con = DBConnector.getConnect();
@@ -190,7 +198,12 @@ public class QnaDAO {
 	}
 	
 	public int getTotalCount(String kind, String search) throws Exception{
-		Connection con = DBConnector.getConnect();
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("kind", kind);
+		map.put("search", search);
+		
+		return sqlSession.selectOne(NAMESAPCE+".getTotalCount", map);
+		/*Connection con = DBConnector.getConnect();
 		String sql = "select nvl(count(qna_seq), 0) from qna where "+kind+" like ?";
 		PreparedStatement st = con.prepareStatement(sql);
 		
@@ -201,6 +214,6 @@ public class QnaDAO {
 		
 		DBConnector.disConnect(rs, st, con);
 		
-		return result;
+		return result;*/
 	}
 }

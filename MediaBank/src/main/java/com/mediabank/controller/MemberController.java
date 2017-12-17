@@ -22,7 +22,7 @@ public class MemberController {
 	  -------------------------------------------------
 	  [로그아웃]
 	*/
-	@RequestMapping("logout")
+	@RequestMapping("/logout")
 	public String logout(HttpSession session){
 		session.invalidate();
 		
@@ -32,7 +32,7 @@ public class MemberController {
 	  -------------------------------------------------
 	  [로그인]
 	*/
-	@RequestMapping("login")
+	@RequestMapping("/login")
 	public String login(RedirectAttributes ra,MemberDTO memberDTO,HttpSession session){
 		String message = null;
 		String path = null;
