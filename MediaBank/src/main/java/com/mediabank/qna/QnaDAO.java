@@ -3,25 +3,21 @@ package com.mediabank.qna;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mediabank.member.MemberDAO;
 import com.mediabank.util.DBConnector;
-import com.mediabank.util.MakeRow;
+import com.mediabank.util.RowNum;
 
 @Repository
 public class QnaDAO {
 	@Autowired
 	private SqlSession sqlSession;
 	
-	private static final String NAMESAPCE = "com.mediabank.qna.QnaMapper";
+	private static final String NAMESAPCE = "qnaMapper.";
 	
 	public QnaDTO searchQna_seq(int qna_seq) throws Exception{
 		Connection con = DBConnector.getConnect();
@@ -74,7 +70,8 @@ public class QnaDAO {
 		 return result;
 	}
 	public int delete(int qna_seq) throws Exception{
-		Connection con = DBConnector.getConnect();
+		return sqlSession.delete(NAMESAPCE+"delet", qna_seq);
+		/*Connection con = DBConnector.getConnect();
 		String sql = "delete qna where qna_seq=?";
 		PreparedStatement st = con.prepareStatement(sql);
 		
@@ -84,131 +81,24 @@ public class QnaDAO {
 		
 		DBConnector.disConnect(st, con);
 		
-		return result;
-		
+		return result;*/	
 	}
-	public int insert(QnaDTO qnaDTO,int user_num) throws Exception	{
-		Connection con = DBConnector.getConnect();
-		
-		String sql = "insert into qna values(qna_seq.nextval,?,?,?,sysdate,'답변 미완료',NULL)";
-		PreparedStatement st = con.prepareStatement(sql);
-		st.setInt(1, user_num);
-		st.setString(2, qnaDTO.getTitle());
-		st.setString(3, qnaDTO.getContents());
-		
-		int result = st.executeUpdate();
-		
-		DBConnector.disConnect(st, con);
-		
-		return result;
+	public int insert(QnaDTO qnaDTO) throws Exception	{
+		return sqlSession.insert(NAMESAPCE+"insert", qnaDTO);
 	}
 	
 	public QnaDTO selectOne(int qna_seq) throws Exception {
-		Connection con = DBConnector.getConnect();
-		
-		String sql = "select * from qna where qna_seq=?";
-		PreparedStatement st = con.prepareStatement(sql);
-		st.setInt(1, qna_seq);
-		ResultSet rs = st.executeQuery();
-		QnaDTO qnaDTO = null;
-		MemberDAO memberDAO = new MemberDAO();
-		if(rs.next())	{
-			int user_num = rs.getInt("user_num");
-			String kind = memberDAO.searchKind(user_num);
-			qnaDTO = new QnaDTO();
-			qnaDTO.setQna_seq(rs.getInt("qna_seq"));
-			qnaDTO.setTitle(rs.getString("title"));
-			qnaDTO.setWriter(memberDAO.searchNickName(user_num, kind));
-			qnaDTO.setContents(rs.getString("contents"));
-			qnaDTO.setReg_date(rs.getDate("reg_date"));
-			qnaDTO.setReply_check(rs.getString("reply_check"));
-			qnaDTO.setReply(rs.getString("reply"));
-		}
-		
-		DBConnector.disConnect(rs, st, con);
-		
-		return qnaDTO;
+		return sqlSession.selectOne(NAMESAPCE+"selectOne", qna_seq);
 	}
-	public List<QnaDTO> adminSelectList(MakeRow makeRow, String kind, String search) throws Exception	{
-		Connection con = DBConnector.getConnect();
-		String sql = "select * from "
-			+	"(select rownum R, Q.* from "
-			+   "(select * from qna where reply_check='답변 미완료' and "+kind+" like ? order by qna_seq desc) Q) "
-			+   "where R between ? and ?";
-		PreparedStatement st = con.prepareStatement(sql);
-		
-		st.setString(1, "%"+search+"%");
-		st.setInt(2, makeRow.getStartRow());
-		st.setInt(3, makeRow.getLastRow());
-		
-		ResultSet rs = st.executeQuery();
-		List<QnaDTO> ar = new ArrayList<QnaDTO>();
-		MemberDAO memberDAO = new MemberDAO();
-		while(rs.next())	{
-			int user_num = rs.getInt("user_num");
-			String member_kind = memberDAO.searchKind(user_num);
-			QnaDTO qnaDTO = new QnaDTO();
-			qnaDTO.setQna_seq(rs.getInt("qna_seq"));
-			qnaDTO.setTitle(rs.getString("title"));
-			qnaDTO.setWriter(memberDAO.searchNickName(user_num, member_kind));
-			qnaDTO.setContents(rs.getString("contents"));
-			qnaDTO.setReg_date(rs.getDate("reg_date"));
-			qnaDTO.setReply_check(rs.getString("reply_check"));
-			qnaDTO.setReply(rs.getString("reply"));
-			ar.add(qnaDTO);
-		}
-		DBConnector.disConnect(rs, st, con);
-		return ar;
-		
+	public List<QnaDTO> adminSelectList(RowNum rowNum) throws Exception	{
+		return sqlSession.selectList(NAMESAPCE+"adminSelectList", rowNum);	
 	}
 	
-	public List<QnaDTO> selectList(MakeRow makeRow, String kind, String search) throws Exception	{
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("kind", kind);
-		map.put("search", search);
-		map.put("startRow", makeRow.getStartRow());
-		map.put("lastRow", makeRow.getLastRow());
-		
-		return sqlSession.selectList(NAMESAPCE+".selectList", map);
-		/*Connection con = DBConnector.getConnect();
-		String sql = "select * from "
-			+	"(select rownum R, Q.* from "
-			+   "(select * from qna where "+kind+" like ? order by qna_seq desc) Q) "
-			+   "where R between ? and ?";
-		PreparedStatement st = con.prepareStatement(sql);
-		
-		st.setString(1, "%"+search+"%");
-		st.setInt(2, makeRow.getStartRow());
-		st.setInt(3, makeRow.getLastRow());
-		
-		ResultSet rs = st.executeQuery();
-		List<QnaDTO> ar = new ArrayList<QnaDTO>();
-		
-		MemberDAO memberDAO = new MemberDAO();
-		while(rs.next())	{
-			int user_num = rs.getInt("user_num");
-			String member_kind = memberDAO.searchKind(user_num);
-			
-			QnaDTO qnaDTO = new QnaDTO();
-			qnaDTO.setQna_seq(rs.getInt("qna_seq"));
-			qnaDTO.setTitle(rs.getString("title"));
-			qnaDTO.setWriter(memberDAO.searchNickName(user_num, member_kind));
-			qnaDTO.setContents(rs.getString("contents"));
-			qnaDTO.setReg_date(rs.getDate("reg_date"));
-			qnaDTO.setReply_check(rs.getString("reply_check"));
-			qnaDTO.setReply(rs.getString("reply"));
-			ar.add(qnaDTO);
-		}
-		DBConnector.disConnect(rs, st, con);
-		return ar;*/
-		
+	public List<QnaDTO> selectList(RowNum rowNum) throws Exception	{
+		return sqlSession.selectList(NAMESAPCE+"selectList", rowNum);
 	}
 	
-	public int getTotalCount(String kind, String search) throws Exception{
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("kind", kind);
-		map.put("search", search);
-		
-		return sqlSession.selectOne(NAMESAPCE+".getTotalCount", map);
+	public int getTotalCount(RowNum rowNum) throws Exception{
+		return sqlSession.selectOne(NAMESAPCE+"getTotalCount", rowNum);
 	}
 }

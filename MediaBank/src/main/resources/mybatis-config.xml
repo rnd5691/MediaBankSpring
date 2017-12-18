@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<mappers>
-		<mapper resource="com/mediabank/qna/QnaMapper.xml"/>
+		<mapper resource="com/mediabank/qna/qnaMapper.xml"/>
 	</mappers>
 </configuration>
  

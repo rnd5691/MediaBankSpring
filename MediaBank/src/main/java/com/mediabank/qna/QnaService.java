@@ -6,14 +6,15 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.mediabank.company.CompanyDAO;
 import com.mediabank.member.MemberDAO;
 import com.mediabank.member.MemberDTO;
 import com.mediabank.person.PersonDAO;
-import com.mediabank.util.PageMaker;
+import com.mediabank.util.ListData;
+import com.mediabank.util.Pager;
+import com.mediabank.util.RowNum;
 
 @Service
 public class QnaService {
@@ -28,11 +29,12 @@ public class QnaService {
 	public int qnaUpdate(QnaDTO qnaDTO) throws Exception{
 		return qnaDAO.update(qnaDTO);
 	}
-	public int qnaDelete(RedirectAttributes ra,int qna_seq) throws Exception{
+	public int qnaDelete(int qna_seq) throws Exception{
 		QnaDTO qnaDTO = qnaDAO.searchQna_seq(qna_seq);
+		ModelAndView mv = new ModelAndView();
 		int result = 0;
 		if(qnaDTO==null) {
-			ra.addFlashAttribute("message", "해당 하는 번호가 존재하지 않습니다.");
+			mv.addObject("message", "해당 하는 번호가 존재하지 않습니다.");
 			result = -1;
 		}else {
 			result = qnaDAO.delete(qna_seq);
@@ -42,30 +44,43 @@ public class QnaService {
 	public int qnaReplyUpdate(QnaDTO qnaDTO) throws Exception{
 		return qnaDAO.replyUpdate(qnaDTO);
 	}
-	public void qnaView(Model model,int qna_seq) throws Exception{
+	public ModelAndView qnaView(HttpSession session, int qna_seq) throws Exception{
 		QnaDTO qnaDTO = qnaDAO.selectOne(qna_seq);
-		model.addAttribute("qna", qnaDTO);
+		
+		String member_kind = memberDAO.searchKind(qnaDTO.getUser_num());
+		qnaDTO.setWriter(memberDAO.searchNickName(qnaDTO.getUser_num(), member_kind));;
+		
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("qna", qnaDTO);
+		mv.setViewName("qna/qnaView");
+		
+		return mv;
 	}
 	
 	public int qnaWrite(QnaDTO qnaDTO,int user_num) throws Exception{
-		return qnaDAO.insert(qnaDTO, user_num);
+		qnaDTO.setUser_num(user_num);
+		return qnaDAO.insert(qnaDTO);
 	}
 	
-	public void qnaList(Model model,HttpSession session,int curPage, String kind, String search) throws Exception{
+	public ModelAndView selectList(HttpSession session,ListData listData) throws Exception{
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
-		if(kind.equals("writer")) {
-			int company = companyDAO.kindCheck(search);
-			int person = personDAO.kindCheck(search);
+		ModelAndView mv = new ModelAndView();
+		RowNum rowNum = listData.makeRow();
+		int totalCount = qnaDAO.getTotalCount(rowNum);
+		Pager pager = listData.makePage(totalCount);
+		if(rowNum.getKind().equals("writer")){
+			int company = companyDAO.kindCheck(rowNum.getSearch());
+			int person = personDAO.kindCheck(rowNum.getSearch());
 			
-			if(company==1) {
-				kind="company_name";
-			}else if(person==1) {
-				kind="nickname";
+			if(company==1){
+				pager.setKind("company_name");
+				rowNum.setKind("company_name");
+			}else if(person==1){
+				pager.setKind("nickname");
+				rowNum.setKind("nickname");
 			}
 		}
 		
-		int totalCount = qnaDAO.getTotalCount(kind, search);
-		PageMaker pageMaker = new PageMaker(curPage, totalCount);
 		
 		if(memberDTO == null) {
 			memberDTO = new MemberDTO();
@@ -74,17 +89,18 @@ public class QnaService {
 		
 		List<QnaDTO> ar = null;
 		if(memberDTO.getKind().equals("admin")) {
-			ar = qnaDAO.adminSelectList(pageMaker.getMakeRow(), kind, search);
+			ar = qnaDAO.adminSelectList(rowNum);
 		}else {
-			ar = qnaDAO.selectList(pageMaker.getMakeRow(), kind, search);
+			ar = qnaDAO.selectList(rowNum);
 		}
-		for(QnaDTO qnaDTO : ar) {
+		for(QnaDTO qnaDTO : ar){
 			String member_kind = memberDAO.searchKind(qnaDTO.getUser_num());
 			qnaDTO.setWriter(memberDAO.searchNickName(qnaDTO.getUser_num(), member_kind));
 		}
-		model.addAttribute("list", ar);
-		model.addAttribute("kind", kind);
-		model.addAttribute("search", search);
-		model.addAttribute("makePage", pageMaker.getMakePage());
+		mv.addObject("list", ar);
+		mv.addObject("pager", pager);
+		mv.setViewName("qna/qnaList");
+		
+		return mv;
 	}
 }

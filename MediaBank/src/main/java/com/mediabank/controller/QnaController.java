@@ -7,12 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.mediabank.member.MemberDTO;
 import com.mediabank.qna.QnaDTO;
 import com.mediabank.qna.QnaService;
+import com.mediabank.util.ListData;
 
 @Controller
 @RequestMapping("/qna")
@@ -52,31 +53,30 @@ public class QnaController {
 		return path;
 	}
 	@RequestMapping("qnaDelete")
-	public String qnaDelete(RedirectAttributes ra,HttpSession session, int qna_seq) {
+	public ModelAndView qnaDelete(ModelAndView mv,HttpSession session, int qna_seq) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
-		String path=null;
+		
 		if(memberDTO==null || memberDTO.getKind().equals("admin")) {
-			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
-			path = "redirect:../MediaBank/main";
+			mv.addObject("message", "잘못된 접근 방식입니다.");
+			mv.setViewName("redirect:../MediaBank/main");
 		}else {
-			
 			int result = 0;
 			try {
-				result = qnaService.qnaDelete(ra, qna_seq);
+				result = qnaService.qnaDelete(qna_seq);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if(result!=-1) {
 				if(result>0) {
-					ra.addFlashAttribute("message", "해당 게시판을 삭제하였습니다.");
+					mv.addObject("message", "해당 게시판을 삭제하였습니다.");
 				}else {
-					ra.addFlashAttribute("message", "게시판 삭제를 실패하였습니다.");
+					mv.addObject("message", "게시판 삭제를 실패하였습니다.");
 				}				
 			}
-			path = "redirect:qnaList";
+			mv.setViewName("redirect:qnaList");
 		}
-		return path;
+		return mv;
 	}
 	@RequestMapping("qnaReplyUpdate")
 	public String qnaReplyUpdate(RedirectAttributes ra,HttpSession session, QnaDTO qnaDTO) {
@@ -104,19 +104,19 @@ public class QnaController {
 	}
 	
 	@RequestMapping("qnaView")
-	public String qnaView(Model model,int qna_seq) {
+	public ModelAndView qnaView(HttpSession session,ModelAndView mv,int qna_seq) {
 		try {
-			qnaService.qnaView(model, qna_seq);
+			mv = qnaService.qnaView(session, qna_seq);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return "qna/qnaView";
+		return mv;
 	}
 	
 	@RequestMapping(value="write", method=RequestMethod.POST)
-	public String write(RedirectAttributes ra,QnaDTO qnaDTO,HttpSession session) {
+	public String write(Model model,QnaDTO qnaDTO,HttpSession session) {
 		int result = 0;
 		try {
 			MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
@@ -127,35 +127,34 @@ public class QnaController {
 		}
 		
 		if(result==0) {
-			ra.addFlashAttribute("message", "Q&A 업로드에 실패 하셨습니다.");
+			model.addAttribute("message", "Q&A 업로드에 실패 하셨습니다.");
 		}
 		
 		return "redirect:qnaList";
 	}
 	@RequestMapping(value="write", method=RequestMethod.GET)
-	public String writeForm(Model model,HttpSession session,RedirectAttributes ra) {
+	public ModelAndView writeForm(ModelAndView mv,HttpSession session) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
-		String path=null;
 		if(memberDTO == null || memberDTO.getKind().equals("admin")) {
-			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			mv.addObject("message", "잘못된 접근 방식입니다.");
 			if(memberDTO==null) {
-				path = "redirect:../MediaBank/main";				
+				mv.setViewName("redirect:../MediaBank/main");				
 			}else {
-				path = "redirect:../qna/qnaList";
+				mv.setViewName("redirect:./qnaList");
 			}
 		}else {
-			path = "qna/qnaWrite";
+			mv.setViewName("qna/qnaWrite");
 		}
-		return path;
+		return mv;
 	}
 	@RequestMapping("qnaList")
-	public String qnaList(HttpSession session,Model model,@RequestParam(defaultValue="1")int curPage, @RequestParam(defaultValue="title")String kind, @RequestParam(defaultValue="")String search) {
+	public ModelAndView selectList(HttpSession session,ListData listData, ModelAndView mv){
 		try {
-			qnaService.qnaList(model, session, curPage, kind, search);
-		}catch(Exception e) {
+			mv= qnaService.selectList(session, listData);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return "qna/qnaList";
+		return mv;
 	}
 }

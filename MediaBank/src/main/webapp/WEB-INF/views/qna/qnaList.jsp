@@ -67,20 +67,20 @@
 			<c:if test="${!empty sessionScope.member && sessionScope.member.kind ne 'admin'}">
 				<a  id="btn" href="write" class="btn btn-default">WRITE</a>			
 			</c:if>
-			<c:if test="${makePage.totalPage > 0}">
+			<c:if test="${pager.totalPage > 0}">
 				<div class="paging">
 					<ul class="pagination">
-						<c:if test="${makePage.curBlock>1}">
-							<li><a href="./qnaList?curPage=1&kind=${kind}&search=${search}">&lt;&lt;</a></li>
-							<li><a href="./qnaList?curPage=${makePage.startNum-1}&kind=${kind}&search=${search}">[이전]</a></li>
+						<c:if test="${pager.curBlock>1}">
+							<li><a href="./qnaList?curPage=1&kind=${pager.kind}&search=${pager.search}">&lt;&lt;</a></li>
+							<li><a href="./qnaList?curPage=${pager.startNum-1}&kind=${pager.kind}&search=${pager.search}">[이전]</a></li>
 						</c:if>
 							
-						<c:forEach begin="${makePage.startNum}" end="${makePage.lastNum}" var="i">
-							<li><a href="./qnaList.qna?curPage=${i}&kind=${kind}&search=${search}">${i}</a></li>
+						<c:forEach begin="${pager.startNum}" end="${pager.lastNum}" var="i">
+							<li><a href="./qnaList.qna?curPage=${i}&kind=${pager.kind}&search=${pager.search}">${i}</a></li>
 						</c:forEach>
-						<c:if test="${makePage.curBlock < makePage.totalBlock}">
-							<li><a href="./qnaList.qna?curPage=${makePage.getLastNum()+1}&kind=${kind}&search=${search}">[다음]</a></li>
-							<li><a href="./qnaList.qna?curPage=${makePage.totalPage}&kind=${kind}&search=${search}">&gt;&gt;</a></li>
+						<c:if test="${pager.curBlock < pager.totalBlock}">
+							<li><a href="./qnaList.qna?curPage=${pager.getLastNum()+1}&kind=${pager.kind}&search=${pager.search}">[다음]</a></li>
+							<li><a href="./qnaList.qna?curPage=${pager.totalPage}&kind=${pager.kind}&search=${pager.search}">&gt;&gt;</a></li>
 						</c:if>
 					</ul>
 				</div>
