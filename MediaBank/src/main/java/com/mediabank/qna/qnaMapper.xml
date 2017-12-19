@@ -68,5 +68,14 @@
  	<delete id="delet" parameterType="int">
  		delete qna where qna_seq=#{qna_seq}
  	</delete>
+ 	<update id="update" parameterType="com.mediabank.qna.QnaDTO">
+ 		update qna set title=#{title}, contents=#{contents} where qna_seq=#{qna_seq}
+ 	</update>
+ 	<update id="replyUpdate" parameterType="com.mediabank.qna.QnaDTO">
+ 		update qna set reply_check='답변 완료', reply=#{reply} where qna_seq=#{qna_seq}
+ 	</update>
+ 	<select id="searchQna_seq" parameterType="int" resultType="com.mediabank.qna.QnaDTO">
+ 		select * from qna where qna_seq=#{qna_seq}
+ 	</select>
 </mapper>
 

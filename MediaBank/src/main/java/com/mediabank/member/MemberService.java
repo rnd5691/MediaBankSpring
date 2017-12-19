@@ -5,7 +5,11 @@ import java.sql.Connection;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.mediabank.company.CompanyDAO;
 import com.mediabank.company.CompanyDTO;
@@ -53,31 +57,26 @@ public class MemberService {
 		return memberDAO.checkId(id);
 	}
 	public int insert(MemberDTO memberDTO, CompanyDTO companyDTO, PersonDTO personDTO) throws Exception{
+		
+		
 		//company계정인지 person계정인지 비교
 		int result = 0;
-		Connection con = null;
 		try{
-			con = DBConnector.getConnect();
-			con.setAutoCommit(false);
-			int user_num = memberDAO.searchUserNum(con);
+			int user_num = memberDAO.searchUserNum();
 			memberDTO.setUser_num(user_num);
-			result = memberDAO.insert(memberDTO, con);
+			result = memberDAO.insert(memberDTO);
 			
 			if(memberDTO.getKind().equals("company")){
 				companyDTO.setUser_num(user_num);
-				result = companyDAO.insert(companyDTO, con);
+				result = companyDAO.insert(companyDTO);
 			}else{
 				personDTO.setUser_num(user_num);
-				result = personDAO.insert(personDTO, con);
+				result = personDAO.insert(personDTO);
 			}
 			
-			con.commit();
 		}catch(Exception e){
-			con.rollback();
+			
 			e.printStackTrace();
-		}finally{
-			con.setAutoCommit(true);
-			con.close();
 		}
 		
 		return result;

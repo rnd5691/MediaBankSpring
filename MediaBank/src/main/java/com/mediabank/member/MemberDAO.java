@@ -6,12 +6,18 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mediabank.util.DBConnector;
 
 @Repository
 public class MemberDAO {
+	@Autowired
+	private SqlSession sqlSession;
+	
+	private static final String NAMESAPCE = "memberMapper.";
 	//회원 계정 종류 구하기
 		public String searchKind(int user_num) throws Exception{
 			Connection con = DBConnector.getConnect();
@@ -30,23 +36,7 @@ public class MemberDAO {
 			
 			return kind;
 		}
-		/*//회사명 구하기
-		public String searchCompanyName(int user_num) throws Exception{
-			Connection con = DBConnector.getConnect();
-			String sql = "select company_name from company where user_num=?";
-			PreparedStatement st = con.prepareStatement(sql);
-			st.setInt(1, user_num);
-			
-			ResultSet rs = st.executeQuery();
-			String company_name = null;
-			if(rs.next()){
-				company_name = rs.getString("company_name");
-			}
-			
-			DBConnector.disConnect(rs, st, con);
-			
-			return company_name;
-		}*/
+		
 		//닉네임 구하기
 		public String searchNickName(int user_num, String member_kind) throws Exception{
 			
@@ -165,8 +155,9 @@ public class MemberDAO {
 			return memberDTO;
 		}
 		//회원 번호 가져오기(일반회원)
-		public int searchUserNum(Connection con) throws Exception{
-			String sql = "select user_num.nextval user_num from dual";
+		public int searchUserNum() throws Exception{
+			return sqlSession.selectOne(NAMESAPCE+"searchUserNum");
+			/*String sql = "select user_num.nextval user_num from dual";
 
 			PreparedStatement st = con.prepareStatement(sql);
 			
@@ -179,11 +170,12 @@ public class MemberDAO {
 			rs.close();
 			st.close();
 			
-			return user_num;
+			return user_num;*/
 		}
 		//회원가입 정보 넣기(공통정보)
-		public int insert(MemberDTO memberDTO, Connection con) throws Exception{
-			String sql = "insert into user_info values(?,?,?,?,?,'N',?,?)";
+		public int insert(MemberDTO memberDTO) throws Exception{
+			return sqlSession.insert(NAMESAPCE+"insert", memberDTO);
+			/*String sql = "insert into user_info values(?,?,?,?,?,'N',?,?)";
 			PreparedStatement st = con.prepareStatement(sql);
 			
 			st.setInt(1, memberDTO.getUser_num());
@@ -198,26 +190,16 @@ public class MemberDAO {
 			
 			st.close();
 			
-			return result;
+			return result;*/
 		}
 		
 		//회원가입 ID 중복확인
 		public boolean checkId(String id) throws Exception{
 			boolean check = true;
-			Connection con = DBConnector.getConnect();
-			
-			String sql = "select * from user_info where id=? and session_check='N'";
-			
-			PreparedStatement st = con.prepareStatement(sql);
-			st.setString(1, id);
-			
-			ResultSet rs = st.executeQuery();
-			
-			if(rs.next()){
+			MemberDTO memberDTO = sqlSession.selectOne(NAMESAPCE+"checkId", id);
+			if(memberDTO != null){
 				check = false;
 			}
-			
-			DBConnector.disConnect(rs, st, con);
 			return check;
 		}
 }

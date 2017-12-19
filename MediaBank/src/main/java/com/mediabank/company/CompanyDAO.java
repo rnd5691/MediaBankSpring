@@ -4,12 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mediabank.util.DBConnector;
 
 @Repository
 public class CompanyDAO {
+	@Autowired
+	private SqlSession sqlSession;
+	
+	private static final String NAMESPACE = "companyMapper.";
 	//작성자가 회사계정인지 확인 하는 부분
 		public int kindCheck(String search) throws Exception{
 			Connection con = DBConnector.getConnect();
@@ -83,9 +89,10 @@ public class CompanyDAO {
 			
 			return companyDTO;
 		}
-		public int insert(CompanyDTO companyDTO, Connection con) throws Exception{
+		public int insert(CompanyDTO companyDTO) throws Exception{
+			return sqlSession.insert(NAMESPACE+"insert", companyDTO);
 			//company_name,user_num,company_num,company_phone
-			String sql = "insert into company values(?,?,?,?)";
+			/*String sql = "insert into company values(?,?,?,?)";
 			PreparedStatement st = con.prepareStatement(sql);
 			
 			st.setInt(1, companyDTO.getUser_num());
@@ -97,6 +104,6 @@ public class CompanyDAO {
 			
 			st.close();
 			
-			return result;
+			return result;*/
 		}
 }

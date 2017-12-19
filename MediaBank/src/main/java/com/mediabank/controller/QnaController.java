@@ -21,7 +21,7 @@ public class QnaController {
 	@Autowired
 	private QnaService qnaService;
 	
-	@RequestMapping(value="qnaUpdate", method=RequestMethod.POST)
+	@RequestMapping(value="/qnaUpdate", method=RequestMethod.POST)
 	public String qnaUpdate(RedirectAttributes ra,QnaDTO qnaDTO) {
 		int result=0;
 		try {
@@ -36,9 +36,9 @@ public class QnaController {
 			ra.addFlashAttribute("message","수정 실패 하였습니다.");
 		}
 		
-		return "redirect:qnaList";
+		return "redirect:./qnaList";
 	}
-	@RequestMapping(value="qnaUpdate", method=RequestMethod.GET)
+	@RequestMapping(value="/qnaUpdate", method=RequestMethod.GET)
 	public String qnaUpdateForm(Model model,QnaDTO qnaDTO,HttpSession session,RedirectAttributes ra) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path=null;
@@ -52,13 +52,13 @@ public class QnaController {
 		
 		return path;
 	}
-	@RequestMapping("qnaDelete")
-	public ModelAndView qnaDelete(ModelAndView mv,HttpSession session, int qna_seq) {
+	@RequestMapping("/qnaDelete")
+	public String qnaDelete(RedirectAttributes ra,HttpSession session, int qna_seq) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
-		
+		String path=null;
 		if(memberDTO==null || memberDTO.getKind().equals("admin")) {
-			mv.addObject("message", "잘못된 접근 방식입니다.");
-			mv.setViewName("redirect:../MediaBank/main");
+			ra.addFlashAttribute("message", "잘못된 접근 방식입니다.");
+			path = "redirect:../MediaBank/main";
 		}else {
 			int result = 0;
 			try {
@@ -69,16 +69,17 @@ public class QnaController {
 			}
 			if(result!=-1) {
 				if(result>0) {
-					mv.addObject("message", "해당 게시판을 삭제하였습니다.");
+					ra.addFlashAttribute("message", "해당 게시판을 삭제하였습니다.");
 				}else {
-					mv.addObject("message", "게시판 삭제를 실패하였습니다.");
+					ra.addFlashAttribute("message", "게시판 삭제를 실패하였습니다.");
 				}				
 			}
-			mv.setViewName("redirect:qnaList");
+			
+			path = "redirect:./qnaList";
 		}
-		return mv;
+		return path;
 	}
-	@RequestMapping("qnaReplyUpdate")
+	@RequestMapping("/qnaReplyUpdate")
 	public String qnaReplyUpdate(RedirectAttributes ra,HttpSession session, QnaDTO qnaDTO) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path=null;
@@ -94,16 +95,16 @@ public class QnaController {
 				e.printStackTrace();
 			}
 			if(result>0) {
-				path = "redirect:qnaList";
+				path = "redirect:./qnaList";
 			}else {
 				ra.addFlashAttribute("message", "답글 업로드에 실패 하였습니다.");		
-				path = "redirect:qnaView?qna_seq="+qnaDTO.getQna_seq();
+				path = "redirect:./qnaView?qna_seq="+qnaDTO.getQna_seq();
 			}	
 		}
 		return path;
 	}
 	
-	@RequestMapping("qnaView")
+	@RequestMapping("/qnaView")
 	public ModelAndView qnaView(HttpSession session,ModelAndView mv,int qna_seq) {
 		try {
 			mv = qnaService.qnaView(session, qna_seq);
@@ -130,7 +131,7 @@ public class QnaController {
 			model.addAttribute("message", "Q&A 업로드에 실패 하셨습니다.");
 		}
 		
-		return "redirect:qnaList";
+		return "redirect:./qnaList";
 	}
 	@RequestMapping(value="write", method=RequestMethod.GET)
 	public ModelAndView writeForm(ModelAndView mv,HttpSession session) {

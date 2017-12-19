@@ -4,12 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mediabank.util.DBConnector;
 
 @Repository
 public class PersonDAO {
+	@Autowired
+	private SqlSession sqlSession;
+	
+	private static final String NAMESPACE = "personMapper.";
 	//작성자가 일반계정인지 확인 하는 부분
 			public int kindCheck(String search) throws Exception{
 				Connection con = DBConnector.getConnect();
@@ -102,8 +108,9 @@ public class PersonDAO {
 			return personDTO;
 		}
 		//회원가입
-		public int insert(PersonDTO personDTO, Connection con) throws Exception{
-			String sql = "insert into person values(?, ?, ?, ?, ?)";
+		public int insert(PersonDTO personDTO) throws Exception{
+			return sqlSession.insert(NAMESPACE+"insert", personDTO);
+			/*String sql = "insert into person values(?, ?, ?, ?, ?)";
 			
 			PreparedStatement st = con.prepareStatement(sql);
 			
@@ -115,6 +122,6 @@ public class PersonDAO {
 			
 			int result = st.executeUpdate();
 			
-			return result;
+			return result;*/
 		}
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memberMapper">
+	<select id="checkId" parameterType="String" resultType="com.mediabank.member.MemberDTO">
+		select * from user_info where id=#{id} and session_check='N'
+	</select>
+	<insert id="insert" parameterType="com.mediabank.member.MemberDTO">
+		insert into user_info values(#{user_num},#{id},#{pw},#{phone},#{email},'N',#{token},#{kind})
+	</insert>
+	<select id="searchUserNum" resultType="int">
+		select user_num.nextval user_num from dual
+	</select>
+</mapper>

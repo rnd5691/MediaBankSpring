@@ -5,6 +5,9 @@
 <configuration>
 	<mappers>
 		<mapper resource="com/mediabank/qna/qnaMapper.xml"/>
+		<mapper resource="com/mediabank/member/memberMapper.xml"/>
+		<mapper resource="com/mediabank/company/companyMapper.xml"/>
+		<mapper resource="com/mediabank/person/personMapper.xml"/>
 	</mappers>
 </configuration>
  

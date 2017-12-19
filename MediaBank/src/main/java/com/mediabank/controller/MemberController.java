@@ -2,8 +2,15 @@ package com.mediabank.controller;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -18,6 +25,9 @@ import com.mediabank.person.PersonDTO;
 public class MemberController {
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private DataSourceTransactionManager transactionManager;
 	/*
 	  -------------------------------------------------
 	  [로그아웃]
@@ -121,13 +131,15 @@ public class MemberController {
 	//입력된 계정 회원가입 정보 저장 하기
 	@RequestMapping("join")
 	public String insert(RedirectAttributes ra,MemberDTO memberDTO, CompanyDTO companyDTO, PersonDTO personDTO){
+		
 		int result = 0;
 		try{
 			result = memberService.insert(memberDTO, companyDTO, personDTO);
 		}catch(Exception e){
+
 			e.printStackTrace();
 		}
-		
+
 		if(result>0){
 			ra.addFlashAttribute("message", "회원 가입에 성공 하셨습니다.");
 		}else{

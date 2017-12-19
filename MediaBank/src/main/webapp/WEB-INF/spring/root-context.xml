@@ -22,11 +22,16 @@
 	<bean id="SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+		<property name="transactionFactory">
+			<bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory"/>
+		</property>
 	</bean>
 	<!-- SqlSessionTemplate 설정 -->
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
 		<constructor-arg name="sqlSessionFactory" ref="SqlSessionFactory"/>
 	</bean>
+	
+	
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<context:component-scan base-package="com.mediabank.company"/>
 	<context:component-scan base-package="com.mediabank.file"/>
