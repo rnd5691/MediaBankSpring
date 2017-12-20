@@ -28,7 +28,9 @@ public class MemberDAO {
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("user_num", user_num);
 			map.put("member_kind", member_kind);
-			
+			System.out.println("닉네임구하기 시작!");
+			System.out.println("보내고자 하는 user_num : "+user_num);
+			System.out.println("보내고자 하는 member_kind : "+member_kind);
 			return sqlSession.selectOne(NAMESAPCE+"searchNickName", map);
 		}
 		//탈퇴한 회원 정보가져옴 제외하는 작업

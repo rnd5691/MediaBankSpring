@@ -33,13 +33,14 @@
 		select user_num from user_info where session_check='N'
 	</select>
 	<select id="searchNickName" parameterType="java.util.HashMap" resultType="String">
+		select 
 		<if test="member_kind=='company'">
-			select company_name from company where user_num=#{user_num}
+			company_name from company 
 		</if>
 		<if test="member_kind=='person'">
-			select nickname from person where user_num=#{user_num}
+			nickname from person  
 		</if>
-
+		where user_num=#{user_num}
 	</select>
 	<select id="searchKind" parameterType="int" resultType="String">
 		select kind from user_info where user_num=#{user_num}

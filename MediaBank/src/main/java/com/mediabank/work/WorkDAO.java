@@ -19,7 +19,8 @@ import com.mediabank.util.MakeRow;
 public class WorkDAO {
 	@Autowired
 	private SqlSession sqlSession;
-	
+	@Autowired
+	private MemberDAO memberDAO;
 	private static final String NAMESPACE = "workMapper.";
 	//다운로드히트 업데이트 
 			public void downloadHitUpdate(int work_seq) throws Exception {
@@ -107,7 +108,6 @@ public class WorkDAO {
 				st.setInt(2, makeRow.getLastRow());
 				ResultSet rs = st.executeQuery();
 				FileDTO fileDTO = null;
-				MemberDAO memberDAO = new MemberDAO();
 				List<FileDTO> image = new ArrayList<FileDTO>();
 				/*HashMap<String, List<FileDTO>> map = new HashMap<>();*/
 				while(rs.next()) {
@@ -273,7 +273,7 @@ public class WorkDAO {
 				ResultSet rs = st.executeQuery();
 				List<WorkDTO> ar = new ArrayList<WorkDTO>();
 				WorkDTO workDTO = null;
-				MemberDAO memberDAO = new MemberDAO();
+				
 				while(rs.next()) {
 					workDTO = new WorkDTO();
 					workDTO.setWork(rs.getString("work"));
@@ -322,7 +322,7 @@ public class WorkDAO {
 			
 			ResultSet rs = st.executeQuery();
 			WorkDTO workDTO = null;
-			MemberDAO memberDAO = new MemberDAO();
+			
 			if(rs.next()){
 				workDTO = new WorkDTO();
 				workDTO.setWork(rs.getString("work"));
@@ -356,7 +356,7 @@ public class WorkDAO {
 			
 			ResultSet rs = st.executeQuery();
 			List<WorkDTO> ar = new ArrayList<WorkDTO>();
-			MemberDAO memberDAO = new MemberDAO();
+			
 			while(rs.next()){
 				WorkDTO workDTO = new WorkDTO();
 				workDTO.setWork_seq(rs.getInt("work_seq"));
@@ -390,7 +390,7 @@ public class WorkDAO {
 			
 			ResultSet rs = st.executeQuery();
 			List<WorkDTO> ar = new ArrayList<WorkDTO>();
-			MemberDAO memberDAO = new MemberDAO();
+			
 			while(rs.next()){
 				WorkDTO workDTO = new WorkDTO();
 				workDTO.setWork_seq(rs.getInt("work_seq"));
@@ -423,7 +423,7 @@ public class WorkDAO {
 			
 			ResultSet rs = st.executeQuery();
 			List<WorkDTO> ar = new ArrayList<WorkDTO>();
-			MemberDAO memberDAO = new MemberDAO();
+			
 			String nickName = memberDAO.searchNickName(user_num, "person");
 			while(rs.next()){
 				WorkDTO workDTO = new WorkDTO();
