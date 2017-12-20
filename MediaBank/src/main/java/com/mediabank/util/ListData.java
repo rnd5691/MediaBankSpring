@@ -5,17 +5,16 @@ public class ListData {
 	private String kind;
 	private String search;
 	private int perPage; //가변적으로 사용할지 말지를 정해서 컨트롤러에서 받아올 지 말지 결정
-	
 	public ListData() {
 		// TODO Auto-generated constructor stub
 		this.curPage = 1;
 		this.kind = "title";
 		this.search = "";
-		this.perPage = 10;
 	}
 	
 	//row
-	public RowNum makeRow(){
+	public RowNum makeRow(int perPage){
+		this.perPage = perPage;
 		RowNum rowNum = new RowNum();
 		rowNum.setStartRow((curPage-1)*perPage+1);
 		rowNum.setLastRow(curPage*perPage);
@@ -65,27 +64,18 @@ public class ListData {
 	}
 	
 	public int getCurPage() {
-		/*if(curPage == 0){
-			curPage = 1;
-		}*/
 		return curPage;
 	}
 	public void setCurPage(int curPage) {
 		this.curPage = curPage;
 	}
 	public String getKind() {
-		/*if(kind == null){
-			kind = "title";
-		}*/
 		return kind;
 	}
 	public void setKind(String kind) {
 			this.kind = kind;
 	}
 	public String getSearch() {
-		/*if(search == null){
-			search = "";
-		}*/
 		return search;
 	}
 	public void setSearch(String search) {

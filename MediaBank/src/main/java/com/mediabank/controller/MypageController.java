@@ -18,6 +18,7 @@ import com.mediabank.file.FileDTO;
 import com.mediabank.member.MemberDTO;
 import com.mediabank.mypage.MypageService;
 import com.mediabank.person.PersonDTO;
+import com.mediabank.util.ListData;
 import com.mediabank.work.WorkDTO;
 
 @Controller
@@ -53,7 +54,7 @@ public class MypageController {
 	}
 	//--------------<작품 별 수익 현황>-------------
 	@RequestMapping("/salesRequestMoney")
-	public String salesRequestMoney(RedirectAttributes ra,Model model,@RequestParam(defaultValue="1")int curPage, HttpSession session) {
+	public String salesRequestMoney(ListData listData,RedirectAttributes ra,Model model,@RequestParam(defaultValue="1")int curPage, HttpSession session) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
 		if(memberDTO == null) {
@@ -61,7 +62,7 @@ public class MypageController {
 			path = "redirect:../MediaBank/main";
 		}else {
 			try {
-				mypageService.salesRequestMoney(model, curPage, memberDTO);
+				mypageService.salesRequestMoney(listData, model, curPage, memberDTO);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -114,7 +115,7 @@ public class MypageController {
 		return path;
 	}
 	@RequestMapping("/salesRequestNow")
-	public String salesRequestNow(@RequestParam(defaultValue="1")int curPage,Model model,RedirectAttributes ra,HttpSession session,@RequestParam(defaultValue="image")String file_kind) {
+	public String salesRequestNow(ListData listData,@RequestParam(defaultValue="1")int curPage,Model model,RedirectAttributes ra,HttpSession session,@RequestParam(defaultValue="image")String file_kind) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path=null;
 		if(memberDTO==null) {
@@ -122,7 +123,7 @@ public class MypageController {
 			path = "redirect:../MediaBank/main";
 		}else {
 			try {
-				mypageService.salesRequestNowForm(session,model, curPage, file_kind, memberDTO);
+				mypageService.salesRequestNowForm(listData, session, model, curPage, file_kind, memberDTO);;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -170,7 +171,7 @@ public class MypageController {
 		}
 		return path;
 	}
-	@RequestMapping(value="viewDelete")
+	@RequestMapping("/viewDelete")
 	public String delete(RedirectAttributes ra,HttpSession session,int work_seq){
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
@@ -180,7 +181,7 @@ public class MypageController {
 		}else{
 			try{
 				mypageService.viewDelete(session, work_seq);
-				path="redirect:salesRequestList";
+				path="redirect:./salesRequestList";
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -284,7 +285,7 @@ public class MypageController {
 		return path;
 	}
 	@RequestMapping("/salesRequestList")
-	public String salesRequestList(RedirectAttributes ra,Model model,@RequestParam(defaultValue="1")int curPage, HttpSession session){
+	public String salesRequestList(ListData listData,RedirectAttributes ra,Model model,@RequestParam(defaultValue="1")int curPage, HttpSession session){
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
 		if(memberDTO==null) {
@@ -293,7 +294,7 @@ public class MypageController {
 		}else {
 			List<WorkDTO> ar = null;
 			try {
-				ar = mypageService.salesRequestList(model, curPage, memberDTO);
+				ar = mypageService.salesRequestList(listData, model, curPage, memberDTO);
 				model.addAttribute("list", ar);
 			}catch(Exception e) {
 				e.printStackTrace();

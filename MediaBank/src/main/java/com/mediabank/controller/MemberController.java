@@ -121,7 +121,6 @@ public class MemberController {
 	//입력된 계정 회원가입 정보 저장 하기
 	@RequestMapping("/join")
 	public String insert(RedirectAttributes ra,MemberDTO memberDTO, CompanyDTO companyDTO, PersonDTO personDTO){
-		
 		int result = 0;
 		try{
 			result = memberService.insert(memberDTO, companyDTO, personDTO);

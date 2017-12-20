@@ -8,7 +8,13 @@ public class FileDTO extends WorkDTO{
 	private String width;
 	private String height;
 	private String file_kind;
-	
+	private String originalName;
+	public String getOriginalName() {
+		return originalName;
+	}
+	public void setOriginalName(String originalName) {
+		this.originalName = originalName;
+	}
 	public String getFile_kind() {
 		return file_kind;
 	}

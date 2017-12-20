@@ -65,7 +65,7 @@ public class QnaService {
 	public ModelAndView selectList(HttpSession session,ListData listData) throws Exception{
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		ModelAndView mv = new ModelAndView();
-		RowNum rowNum = listData.makeRow();
+		RowNum rowNum = listData.makeRow(10);
 		int totalCount = qnaDAO.getTotalCount(rowNum);
 		Pager pager = listData.makePage(totalCount);
 		if(rowNum.getKind().equals("writer")){

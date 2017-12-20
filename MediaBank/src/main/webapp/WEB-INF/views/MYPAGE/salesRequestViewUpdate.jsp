@@ -172,8 +172,8 @@ $(function(){
 				<textarea name="reply" readonly="readonly">${work.reply }</textarea>
 			</div>		
 		</c:if>
-		<button id="update" class="bloat btn btn-default">UPDATE</button>
-		<!-- <input type="button" id="update" class="bloat btn btn-default" value="UPDATE"> -->
+		<!-- <button id="update" class="bloat btn btn-default">UPDATE</button> -->
+		<input type="button" id="update" class="bloat btn btn-default" value="UPDATE">
 		
 	</form>
 </div>

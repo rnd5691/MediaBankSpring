@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.mediabank.file.FileDTO;
 import com.mediabank.member.MemberDAO;
 import com.mediabank.util.DBConnector;
-import com.mediabank.util.MakeRow;
+import com.mediabank.util.RowNum;
 
 @Repository
 public class WorkDAO {
@@ -77,12 +77,12 @@ public class WorkDAO {
 			}
 			
 			//태그에 해당하는 값만 가져와! 무명작가게시판용
-			public List<FileDTO> seachWorkSEQ(String tag, String kind, MakeRow makeRow) throws Exception {
+			public List<FileDTO> seachWorkSEQ(String tag, String kind, RowNum rowNum) throws Exception {
 				Connection con = DBConnector.getConnect();
 				String sql = "SELECT * FROM (SELECT rownum R, Q.* FROM (SELECT rownum ,f.* FROM FILE_TABLE f WHERE f.file_kind='"+kind+"' and work_seq IN (SELECT w.work_seq FROM work_info w WHERE tag LIKE '%"+tag+"%') ORDER BY f.work_seq desc) Q) WHERE R between ? and ?";
 				PreparedStatement st = con.prepareStatement(sql);
-				st.setInt(1, makeRow.getStartRow());
-				st.setInt(2, makeRow.getLastRow());
+				st.setInt(1, rowNum.getStartRow());
+				st.setInt(2, rowNum.getLastRow());
 				ResultSet rs = st.executeQuery();
 				List<FileDTO> ar = new ArrayList<FileDTO>();
 				FileDTO fileDTO = null;
@@ -97,15 +97,15 @@ public class WorkDAO {
 				return ar;
 			}
 			//무명작가 검색창
-			public List<FileDTO> artistSearch(String kind, String select, String search,MakeRow makeRow) throws Exception {
+			public List<FileDTO> artistSearch(String kind, String select, String search,RowNum rowNum) throws Exception {
 				Connection con = DBConnector.getConnect();
 				String sql = "SELECT * FROM (SELECT rownum R, Q.* FROM "
 						+ "(SELECT w.*, f.file_name, f.file_kind FROM work_info w, file_table f "
 						+ "WHERE w."+select+" LIKE '%"+search+"%' and w.WORK_SEQ = f.WORK_SEQ and upload_check='승인' and sell='Y' and f.file_kind='"+kind+"'"
 								+ " ORDER BY f.WORK_SEQ desc) Q) WHERE R between ? and ?";
 				PreparedStatement st = con.prepareStatement(sql);
-				st.setInt(1, makeRow.getStartRow());
-				st.setInt(2, makeRow.getLastRow());
+				st.setInt(1, rowNum.getStartRow());
+				st.setInt(2, rowNum.getLastRow());
 				ResultSet rs = st.executeQuery();
 				FileDTO fileDTO = null;
 				List<FileDTO> image = new ArrayList<FileDTO>();
@@ -186,27 +186,14 @@ public class WorkDAO {
 			return result;
 		}
 		//salesReuqestViewDelete
-		public void salesRequestViewDelete(int work_seq, Connection con) throws Exception {
-				String sql = "DELETE work_info WHERE work_seq=?";
-				PreparedStatement st = con.prepareStatement(sql);
-				st.setInt(1, work_seq);
-				st.executeUpdate();
-				st.close();
-		}
+	public void salesRequestViewDelete(int work_seq) throws Exception {
+		sqlSession.delete(NAMESPACE+"salesRequestViewDelete", work_seq);
+	}
 		
-		//viewUpdate
-		public int salesViewUpdate(WorkDTO workDTO, Connection con) throws Exception {
-			String sql = "UPDATE work_info SET work=?, work_date=sysdate, tag=?, price=?, contents=?, upload_check='대기중', reply=null WHERE work_seq=?";
-			PreparedStatement st = con.prepareStatement(sql);
-			st.setString(1, workDTO.getWork());
-			st.setString(2, workDTO.getTag());
-			st.setInt(3, workDTO.getPrice());
-			st.setString(4, workDTO.getContents());
-			st.setInt(5, workDTO.getWork_seq());
-			int result = st.executeUpdate();
-			st.close();
-			return result;
-		}
+	//viewUpdate
+	public int salesViewUpdate(WorkDTO workDTO) throws Exception {
+		return sqlSession.update(NAMESPACE+"salesViewUpdate", workDTO);
+	}
 		
 		public String searchWork(int work_seq) throws Exception{
 			Connection con = DBConnector.getConnect();
@@ -343,7 +330,7 @@ public class WorkDAO {
 			return workDTO;
 		}
 		
-		public List<WorkDTO> adminSelectList(MakeRow makeRow) throws Exception{
+		public List<WorkDTO> adminSelectList(RowNum rowNum) throws Exception{
 			Connection con = DBConnector.getConnect();
 			String sql = "select * from "
 					+	"(select rownum R, Q.* from "
@@ -351,8 +338,8 @@ public class WorkDAO {
 					+   "where R between ? and ?";
 			PreparedStatement st = con.prepareStatement(sql);
 			
-			st.setInt(1, makeRow.getStartRow());
-			st.setInt(2, makeRow.getLastRow());
+			st.setInt(1, rowNum.getStartRow());
+			st.setInt(2, rowNum.getLastRow());
 			
 			ResultSet rs = st.executeQuery();
 			List<WorkDTO> ar = new ArrayList<WorkDTO>();
@@ -376,7 +363,7 @@ public class WorkDAO {
 			return ar;
 		}
 		
-		public List<WorkDTO> MoneySelectList(int user_num, MakeRow makeRow) throws Exception{
+		public List<WorkDTO> MoneySelectList(int user_num, RowNum rowNum) throws Exception{
 			Connection con = DBConnector.getConnect();
 			String sql = "select * from "
 					+	"(select rownum R, Q.* from "
@@ -385,8 +372,8 @@ public class WorkDAO {
 			PreparedStatement st = con.prepareStatement(sql);
 			
 			st.setInt(1, user_num);
-			st.setInt(2, makeRow.getStartRow());
-			st.setInt(3, makeRow.getLastRow());
+			st.setInt(2, rowNum.getStartRow());
+			st.setInt(3, rowNum.getLastRow());
 			
 			ResultSet rs = st.executeQuery();
 			List<WorkDTO> ar = new ArrayList<WorkDTO>();
@@ -409,7 +396,7 @@ public class WorkDAO {
 			return ar;
 		}
 		
-		public List<WorkDTO> selectList(int user_num, MakeRow makeRow) throws Exception{
+		public List<WorkDTO> selectList(int user_num, RowNum rowNum) throws Exception{
 			Connection con = DBConnector.getConnect();
 			String sql = "select * from "
 					+	"(select rownum R, Q.* from "
@@ -418,8 +405,8 @@ public class WorkDAO {
 			PreparedStatement st = con.prepareStatement(sql);
 			
 			st.setInt(1, user_num);
-			st.setInt(2, makeRow.getStartRow());
-			st.setInt(3, makeRow.getLastRow());
+			st.setInt(2, rowNum.getStartRow());
+			st.setInt(3, rowNum.getLastRow());
 			
 			ResultSet rs = st.executeQuery();
 			List<WorkDTO> ar = new ArrayList<WorkDTO>();

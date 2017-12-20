@@ -6,4 +6,12 @@
 	<update id="dropOut" parameterType="int">
 		update work_info set sell='N' where user_num=#{user_nume}
 	</update>
+	<delete id="salesRequestViewDelete" parameterType="int">
+		delete work_info where work_seq=#{work_seq}
+	</delete>
+	<update id="salesViewUpdate" parameterType="com.mediabank.work.WorkDTO">
+		update work_info 
+		set work=#{work}, work_date=sysdate, tag=#{tag}, price=#{price}, contents=#{contents}, upload_check='대기중', reply=null 
+		where work_seq=#{work_seq} 
+	</update>
 </mapper>

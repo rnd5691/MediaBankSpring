@@ -16,18 +16,6 @@
 	$(function(){
 		$("#salesRequestList").css('color', 'white');
 		$("#salesRequestList").css('background-color', '#83b14e');
-		
-		//업데이트
-		$("#viewUpdate").click(function(){
-			$("#frm").prop("action", "salesRequestUpdate");
-			$("#frm").prop("method", "GET");
-			$("#frm").submit();
-		});
-		//삭제
-		$("#viewDelete").click(function(){
-			$("#frm").prop("action", "viewDelete");
-			$("#frm").submit();
-		});
 	});
 </script>
 </head>
@@ -46,7 +34,7 @@
 	<div class="title">
 		<h1>My Page</h1>&nbsp;&nbsp;<h5>내 작품 판매승인 요청</h5>
 	</div>
-	<form method="post" id="frm">
+	<form action="salesRequestUpdate">
 		<input type="hidden" name="work_seq" value="${work.work_seq}">
 		<input type="hidden" name="file_kind" value="${file.file_kind}">
 		<table class="table">
@@ -103,8 +91,8 @@
 			</div>		
 		</c:if>
 		<c:if test="${work.upload_check eq '대기중' || work.upload_check eq '거부'}">
-	      <input type="button" class="bloat btn btn-default" id="viewDelete" value="DELETE">
-	      <input type="button" class="bloat btn btn-default" id="viewUpdate" value="UPDATE">
+	      <a href="./viewDelete?work_seq=${work.work_seq}" class="bloat btn btn-default">DELETE</a>
+	      <input type="submit" class="bloat btn btn-default" value="UPDATE">
       	</c:if>
 	</form>
 </div>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fileMapper">
+	<select id="work_seq" parameterType="java.util.HashMap" resultType="int">
+		select * from 
+		(select rownum R, I.* from 
+		(select w.work_seq from work_info w, file_table f 
+		where f.work_seq=w.work_seq and w.user_num=#{user_num} and w.upload_check='승인' and f.file_kind=#{file_kind}) I) 
+		where R between #{rowNum.startRow} and #{rowNum.lastRow}
+	</select>
+	<select id="selectWorkSeq" parameterType="int" resultType="com.mediabank.file.FileDTO">
+		select work_seq from file_table where file_num=#{file_num}
+	</select>
+	<select id="getTotalCount" parameterType="java.util.HashMap" resultType="int">
+		select nvl(count(f.work_seq), 0) 
+		from file_table f, work_info w 
+		where f.work_seq=w.work_seq and w.user_num=#{user_num} and w.upload_check='승인' and f.file_kind=#{file_kind}
+	</select>
+	<select id="selectNow" parameterType="java.util.HashMap" resultType="com.mediabank.file.FileDTO">
+		select * from 
+		(select rownum R, I.* from 
+		(select f.file_num, f.work_seq, f.file_name, f.file_kind, w.user_num, w.sell, w.upload_check 
+		from work_info w, file_table f 
+		where f.work_seq=w.work_seq and user_num=#{user_num} and w.upload_check='승인' and file_kind=#{file_kind}) I) 
+		where R between #{rowNum.startRow} and #{rowNum.lastRow}
+	</select>
+	<delete id="salesRequestViewDelete" parameterType="int">
+		delete file_table where work_seq=#{work_seq}
+	</delete>
+	<update id="salesRequestViewUpdate" parameterType="com.mediabank.file.FileDTO">
+		update file_table 
+		set originalname=#{originalName}, file_route=#{file_route}, width=#{width}, height=#{height}, file_name=#{file_name} 
+		where work_seq=#{work_seq}
+	</update>
+</mapper>

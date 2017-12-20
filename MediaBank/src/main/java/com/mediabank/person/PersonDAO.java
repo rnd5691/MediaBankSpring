@@ -32,7 +32,6 @@ public class PersonDAO {
 		return sqlSession.update(NAMESPACE+"upload", personDTO);
 	}
 	public PersonDTO selectOne(int user_num) throws Exception{
-		System.out.println("user_num:"+user_num);
 		return sqlSession.selectOne(NAMESPACE+"selectOne", user_num);
 	}
 	//회원가입
