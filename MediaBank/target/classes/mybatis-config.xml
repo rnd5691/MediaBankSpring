@@ -8,6 +8,7 @@
 		<mapper resource="com/mediabank/member/memberMapper.xml"/>
 		<mapper resource="com/mediabank/company/companyMapper.xml"/>
 		<mapper resource="com/mediabank/person/personMapper.xml"/>
+		<mapper resource="com/mediabank/work/workMapper.xml"/>
 	</mappers>
 </configuration>
  

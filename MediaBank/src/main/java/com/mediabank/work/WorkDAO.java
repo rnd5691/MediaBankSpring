@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.mediabank.file.FileDTO;
@@ -15,6 +17,10 @@ import com.mediabank.util.MakeRow;
 
 @Repository
 public class WorkDAO {
+	@Autowired
+	private SqlSession sqlSession;
+	
+	private static final String NAMESPACE = "workMapper.";
 	//다운로드히트 업데이트 
 			public void downloadHitUpdate(int work_seq) throws Exception {
 				Connection con = DBConnector.getConnect();
@@ -146,13 +152,8 @@ public class WorkDAO {
 			return result;
 		}
 		//회원탈퇴시 판매유무 변경
-		public int dropOut(int user_num, Connection con) throws Exception{
-			String sql = "update work_info set sell='N' where user_num=?";
-			PreparedStatement st = con.prepareStatement(sql);
-			st.setInt(1, user_num);
-			int result = st.executeUpdate();
-			st.close();
-			return result;
+		public int dropOut(int user_num) throws Exception{
+			return sqlSession.update(NAMESPACE+"dropOut", user_num);
 		}
 		
 		//관리자 승인시 업데이트
@@ -423,11 +424,12 @@ public class WorkDAO {
 			ResultSet rs = st.executeQuery();
 			List<WorkDTO> ar = new ArrayList<WorkDTO>();
 			MemberDAO memberDAO = new MemberDAO();
+			String nickName = memberDAO.searchNickName(user_num, "person");
 			while(rs.next()){
 				WorkDTO workDTO = new WorkDTO();
 				workDTO.setWork_seq(rs.getInt("work_seq"));
 				workDTO.setWork(rs.getString("work"));
-				workDTO.setNickname(memberDAO.searchNickName(rs.getInt("user_num"), "person"));
+				workDTO.setNickname(nickName);
 				workDTO.setWork_date(rs.getDate("work_date"));
 				workDTO.setUpload_check(rs.getString("upload_check"));
 				workDTO.setDownload_hit(rs.getInt("download_hit"));

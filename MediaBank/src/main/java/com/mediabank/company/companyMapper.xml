@@ -6,4 +6,16 @@
 	<insert id="insert" parameterType="com.mediabank.company.CompanyDTO">
 		insert into company values(#{user_num},#{company_name},#{company_num},#{company_phone})
 	</insert>
+	<select id="selectWriter" parameterType="int" resultType="String">
+		select company_name from company where user_num=#{user_num}
+	</select>
+	<update id="upload" parameterType="com.mediabank.company.CompanyDTO">
+		update company set company_name=#{company_name}, company_num=#{company_num}, company_phone=#{company_phone} where user_num=#{user_num}
+	</update>
+	<select id="selectOne" parameterType="int" resultType="com.mediabank.company.CompanyDTO">
+		select * from company where user_num=#{user_num}
+	</select>
+	<select id="kindCheck" parameterType="String" resultType="com.mediabank.company.CompanyDTO">
+		select * from company where company_name like '%'||#{search}||'%'
+	</select>
 </mapper>

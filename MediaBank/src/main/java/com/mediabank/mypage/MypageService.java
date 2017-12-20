@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -45,29 +46,17 @@ public class MypageService {
 	@Autowired
 	private FileDAO fileDAO;
 	//--------------<탈퇴하기>-----------------
+	@Transactional
 	public int dropOut(MemberDTO memberDTO) throws Exception{
 		int result = 0;
-		Connection con = null;
-		try {
-			con = DBConnector.getConnect();
-			con.setAutoCommit(false);
-			//회원 탈퇴 정보 추가
-			result = memberDAO.dropOut(memberDTO.getUser_num(), con);
-			//탈퇴 회원 작품이 있는지 확인
-			int work = workDAO.workTotalCount(memberDTO.getUser_num());
-			//작품이 있을 경우 판매유무를 모두 N으로 변경
-			if(work>0) {
-				result = workDAO.dropOut(memberDTO.getUser_num(), con);
-			}
-			con.commit();
-		}catch(Exception e) {
-			con.rollback();
-			e.printStackTrace();
-		}finally {
-			con.setAutoCommit(true);
-			con.close();
+		//회원 탈퇴 정보 추가
+		result = memberDAO.dropOut(memberDTO.getUser_num());
+		//탈퇴 회원 작품이 있는지 확인
+		int work = workDAO.workTotalCount(memberDTO.getUser_num());
+		//작품이 있을 경우 판매유무를 모두 N으로 변경
+		if(work>0) {
+			result = workDAO.dropOut(memberDTO.getUser_num());
 		}
-		
 		return result;
 	}
 	//--------------<작품 별 수익 현황>-------------
@@ -450,34 +439,20 @@ public class MypageService {
 		return ar;
 	}
 	//---------<내정보 메뉴 관련>---------
-	public int update(MemberDTO memberDTO,PersonDTO personDTO,CompanyDTO companyDTO) throws Exception{
-		
-		Connection con = null;
-		int result = 0;
+	@Transactional
+	public int update(HttpSession session,MemberDTO memberDTO,PersonDTO personDTO,CompanyDTO companyDTO) throws Exception{
+		MemberDTO login_info = (MemberDTO)session.getAttribute("member");
+		memberDTO.setKind(login_info.getKind());
 		if(memberDTO.getToken()!=null){
 			memberDTO.setPw("NULL");
 		}
-		
-		try{
-			con = DBConnector.getConnect();
-			con.setAutoCommit(false);
-			
-			result = memberDAO.update(memberDTO, con);
-			
-			if(memberDTO.getKind().equals("company")){
-				result = companyDAO.update(companyDTO, con);
-			}else{
-				result = personDAO.upload(personDTO, con);
-			}
-			
-			con.commit();
-		}catch(Exception e){
-			e.printStackTrace();
-			con.rollback();
-		}finally{
-			con.setAutoCommit(true);
+		int result = memberDAO.update(memberDTO);	
+		if(memberDTO.getKind().equals("company")){
+			result = companyDAO.upload(companyDTO);
+		}else{
+			result = personDAO.upload(personDTO);
 		}
-		
+		session.setAttribute("member", memberDTO);
 		return result;
 	}
 	

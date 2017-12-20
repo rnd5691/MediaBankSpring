@@ -1,21 +1,15 @@
 package com.mediabank.member;
 
-import java.sql.Connection;
-
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mediabank.company.CompanyDAO;
 import com.mediabank.company.CompanyDTO;
 import com.mediabank.person.PersonDAO;
 import com.mediabank.person.PersonDTO;
-import com.mediabank.util.DBConnector;
 
 @Service
 public class MemberService {
@@ -46,7 +40,6 @@ public class MemberService {
 				session.setAttribute("writer", writer);	
 			}
 		}
-		
 		return message;
 	}
 	/*
@@ -56,29 +49,22 @@ public class MemberService {
 	public boolean idCheck(String id) throws Exception{
 		return memberDAO.checkId(id);
 	}
+	
+	@Transactional
 	public int insert(MemberDTO memberDTO, CompanyDTO companyDTO, PersonDTO personDTO) throws Exception{
-		
-		
 		//company계정인지 person계정인지 비교
 		int result = 0;
-		try{
-			int user_num = memberDAO.searchUserNum();
-			memberDTO.setUser_num(user_num);
-			result = memberDAO.insert(memberDTO);
-			
-			if(memberDTO.getKind().equals("company")){
-				companyDTO.setUser_num(user_num);
-				result = companyDAO.insert(companyDTO);
-			}else{
-				personDTO.setUser_num(user_num);
-				result = personDAO.insert(personDTO);
-			}
-			
-		}catch(Exception e){
-			
-			e.printStackTrace();
+		int user_num = memberDAO.searchUserNum();
+		memberDTO.setUser_num(user_num);
+		result = memberDAO.insert(memberDTO);
+		if(memberDTO.getKind().equals("company")){
+			companyDTO.setUser_num(user_num);
+			System.out.println("2");
+			result = companyDAO.insert(companyDTO);
+		}else{
+			personDTO.setUser_num(user_num);
+			result = personDAO.insert(personDTO);
 		}
-		
 		return result;
 	}
 	

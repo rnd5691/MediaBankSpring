@@ -26,7 +26,7 @@ public class MypageController {
 	@Autowired
 	private MypageService mypageService;
 	//--------------<탈퇴하기>-----------------
-	@RequestMapping("DropOut")
+	@RequestMapping("/DropOut")
 	public String dropOut(Model model,RedirectAttributes ra,HttpSession session) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
@@ -52,7 +52,7 @@ public class MypageController {
 		return path;
 	}
 	//--------------<작품 별 수익 현황>-------------
-	@RequestMapping("salesRequestMoney")
+	@RequestMapping("/salesRequestMoney")
 	public String salesRequestMoney(RedirectAttributes ra,Model model,@RequestParam(defaultValue="1")int curPage, HttpSession session) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
@@ -71,7 +71,7 @@ public class MypageController {
 		return path;
 	}
 	//--------------<현재 판매중인 내 작품>-----------
-	@RequestMapping("salesRequestNowUpload")
+	@RequestMapping("/salesRequestNowUpload")
 	public String saelsRequestNowUpload(RedirectAttributes ra,HttpSession session,String[] view,String file_kind) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
@@ -90,12 +90,12 @@ public class MypageController {
 			if(result==0) {
 				ra.addFlashAttribute("message", "변경 사항이 저장되지 않았습니다.");
 			}
-			path="redirect:salesRequestNow?file_kind="+file_kind;
+			path="redirect:./salesRequestNow?file_kind="+file_kind;
 		}
 		
 		return path;
 	}
-	@RequestMapping("salesRequestNowAdd")
+	@RequestMapping("/salesRequestNowAdd")
 	public String saelsRequestNowAdd(@RequestParam(defaultValue="1")int curPage,Model model,RedirectAttributes ra,HttpSession session,@RequestParam(defaultValue="image")String file_kind){
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
@@ -113,7 +113,7 @@ public class MypageController {
 		}
 		return path;
 	}
-	@RequestMapping("salesRequestNow")
+	@RequestMapping("/salesRequestNow")
 	public String salesRequestNow(@RequestParam(defaultValue="1")int curPage,Model model,RedirectAttributes ra,HttpSession session,@RequestParam(defaultValue="image")String file_kind) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path=null;
@@ -132,7 +132,7 @@ public class MypageController {
 		return path;
 	}
 	//--------------<내 작품 승인 현황>--------------
-	@RequestMapping(value="adminSalesRequestUpdate", method=RequestMethod.POST)
+	@RequestMapping(value="/adminSalesRequestUpdate", method=RequestMethod.POST)
 	public String adminSalesReplyUpdate(RedirectAttributes ra,WorkDTO workDTO) {
 		int result = 0;
 		try {
@@ -146,7 +146,7 @@ public class MypageController {
 		}
 		return "admin/salesRequestList";
 	}
-	@RequestMapping(value="adminSalesRequestUpdate", method=RequestMethod.GET)
+	@RequestMapping(value="/adminSalesRequestUpdate", method=RequestMethod.GET)
 	public String adminSalesApprovalUpdate(RedirectAttributes ra,HttpSession session, WorkDTO workDTO) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
@@ -166,7 +166,7 @@ public class MypageController {
 				ra.addFlashAttribute("message","업데이트를 실패 하였습니다.");
 			}
 			
-			path="redirect:salesRequestList";
+			path="redirect:./salesRequestList";
 		}
 		return path;
 	}
@@ -188,7 +188,7 @@ public class MypageController {
 		
 		return path;
 	}
-	@RequestMapping(value="write", method=RequestMethod.POST)
+	@RequestMapping(value="/write", method=RequestMethod.POST)
 	public String write(RedirectAttributes ra,MultipartHttpServletRequest request,HttpSession session,FileDTO fileDTO, WorkDTO workDTO){
 		int result = 0;
 		try {
@@ -206,9 +206,9 @@ public class MypageController {
 			}			
 		}
 		
-		return "redirect:salesRequestList";
+		return "redirect:./salesRequestList";
 	}
-	@RequestMapping(value="write", method=RequestMethod.GET)
+	@RequestMapping(value="/write", method=RequestMethod.GET)
 	public String writeForm(Model model,RedirectAttributes ra,HttpSession session){
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
@@ -227,7 +227,7 @@ public class MypageController {
 		
 		return path;
 	}
-	@RequestMapping(value="salesRequestUpdate", method=RequestMethod.POST)
+	@RequestMapping(value="/salesRequestUpdate", method=RequestMethod.POST)
 	public String salesRequestUpdate(RedirectAttributes ra,MultipartHttpServletRequest request,HttpSession session,FileDTO fileDTO, WorkDTO workDTO) {
 		int result=0;
 		try{
@@ -243,9 +243,9 @@ public class MypageController {
 			}			
 		}
 		
-		return "redirect:salesRequestList";
+		return "redirect:./salesRequestList";
 	}
-	@RequestMapping(value="salesRequestUpdate", method=RequestMethod.GET)
+	@RequestMapping(value="/salesRequestUpdate", method=RequestMethod.GET)
 	public String salesRequestUpdateForm(Model model, int work_seq) {
 		try {
 			mypageService.salesRequestViewForm(model, work_seq);
@@ -254,7 +254,7 @@ public class MypageController {
 		}
 		return "MYPAGE/salesRequestViewUpdate";
 	}
-	@RequestMapping("salesRequestView")
+	@RequestMapping("/salesRequestView")
 	public String salesRequestView(RedirectAttributes ra,Model model,int work_seq,HttpSession session) {
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
@@ -275,7 +275,7 @@ public class MypageController {
 			}else {
 				if(!check) {
 					ra.addFlashAttribute("message","이미 관리가 완료 된 작품입니다.");
-					path = "redirect:salesRequestList";
+					path = "redirect:./salesRequestList";
 				}else {
 					path = "MYPAGE/salesRequestView";					
 				}
@@ -283,7 +283,7 @@ public class MypageController {
 		}
 		return path;
 	}
-	@RequestMapping("salesRequestList")
+	@RequestMapping("/salesRequestList")
 	public String salesRequestList(RedirectAttributes ra,Model model,@RequestParam(defaultValue="1")int curPage, HttpSession session){
 		MemberDTO memberDTO = (MemberDTO)session.getAttribute("member");
 		String path = null;
@@ -307,11 +307,11 @@ public class MypageController {
 		return path;
 	}
 	//------------<내 정보>---------------------
-	@RequestMapping("update")
-	public String update(RedirectAttributes ra,MemberDTO memberDTO,PersonDTO personDTO,CompanyDTO companyDTO){
+	@RequestMapping("/update")
+	public String update(HttpSession session,RedirectAttributes ra,MemberDTO memberDTO,PersonDTO personDTO,CompanyDTO companyDTO){
 		int result=0;
 		try{
-			result = mypageService.update(memberDTO, personDTO, companyDTO);
+			result = mypageService.update(session,memberDTO, personDTO, companyDTO);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -322,10 +322,10 @@ public class MypageController {
 			ra.addFlashAttribute("message", "회원 정보 수정에 실패 하셨습니다.");
 		}
 		
-		return "redirect:myinfo";
+		return "redirect:./myinfo";
 	}
 	
-	@RequestMapping("mypageAdd")
+	@RequestMapping("/mypageAdd")
 	public String mypageAdd(RedirectAttributes ra,Model model,HttpSession session){
 		MemberDTO memberDTO = null;
 		String path = null;
@@ -344,7 +344,7 @@ public class MypageController {
 		
 		return path;
 	}
-	@RequestMapping("myinfo")
+	@RequestMapping("/myinfo")
 	public String myinfo(RedirectAttributes ra,HttpSession session){
 		MemberDTO memberDTO = null;
 		String path = null;

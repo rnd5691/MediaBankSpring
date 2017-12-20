@@ -7,9 +7,41 @@
 		select * from user_info where id=#{id} and session_check='N'
 	</select>
 	<insert id="insert" parameterType="com.mediabank.member.MemberDTO">
-		insert into user_info values(#{user_num},#{id},#{pw},#{phone},#{email},'N',#{token},#{kind})
+		insert into user_info values
+		(#{user_num},
+		#{id},
+		#{pw},
+		#{phone, jdbcType=VARCHAR},
+		#{email},
+		'N',
+		#{token, jdbcType=VARCHAR},
+		#{kind})
 	</insert>
 	<select id="searchUserNum" resultType="int">
 		select user_num.nextval user_num from dual
+	</select>
+	<select id="selectOne" parameterType="com.mediabank.member.MemberDTO" resultType="com.mediabank.member.MemberDTO">
+		select * from user_info where id=#{id} and pw=#{pw} and kind=#{kind} and session_check='N'
+	</select>
+	<update id="update" parameterType="com.mediabank.member.MemberDTO">
+		update user_info set pw=#{pw}, phone=#{phone, jdbcType=VARCHAR}, email=#{email} where user_num=#{user_num}
+	</update>
+	<update id="dropOut" parameterType="int">
+		update user_info set session_check='Y' where user_num=#{user_num}
+	</update>
+	<select id="adminDropOutWork" resultType="int">
+		select user_num from user_info where session_check='N'
+	</select>
+	<select id="searchNickName" parameterType="java.util.HashMap" resultType="String">
+		<if test="member_kind=='company'">
+			select company_name from company where user_num=#{user_num}
+		</if>
+		<if test="member_kind=='person'">
+			select nickname from person where user_num=#{user_num}
+		</if>
+
+	</select>
+	<select id="searchKind" parameterType="int" resultType="String">
+		select kind from user_info where user_num=#{user_num}
 	</select>
 </mapper>
