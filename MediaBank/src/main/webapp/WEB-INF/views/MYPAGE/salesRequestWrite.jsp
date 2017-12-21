@@ -57,7 +57,7 @@
 		<div class="title">
 			<h1>My Page</h1>&nbsp;&nbsp;<h5>내 작품 판매승인 요청 작성</h5>
 		</div>
-		<form action="write" method="post" enctype="multipart/form-data" id="frm">
+		<form action="./write" method="post" enctype="multipart/form-data" id="frm">
 			<input type="hidden" name="nickname" value="${nickname}">
 			<table class="table table-hover">
 				<tr>

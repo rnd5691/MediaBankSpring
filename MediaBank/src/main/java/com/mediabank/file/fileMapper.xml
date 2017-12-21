@@ -34,4 +34,13 @@
 		set originalname=#{originalName}, file_route=#{file_route}, width=#{width}, height=#{height}, file_name=#{file_name} 
 		where work_seq=#{work_seq}
 	</update>
+	<select id="selectOne" parameterType="int" resultType="com.mediabank.file.FileDTO">
+		select * from file_table where work_seq=#{work_seq}
+	</select>
+	<insert id="fileUpload" parameterType="com.mediabank.file.FileDTO">
+		<selectKey keyProperty="file_num" resultType="int" order="BEFORE">
+			select file_num.nextval from dual
+		</selectKey>
+		insert into file_table values(#{file_num},#{work_seq},#{file_route},#{file_name},#{width},#{height},#{file_kind},#{originalName})
+	</insert>
 </mapper>

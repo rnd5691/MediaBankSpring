@@ -280,25 +280,16 @@ public class MypageService {
 		return result;
 	}
 	
+	@Transactional
 	public int fileInsert(WorkDTO workDTO, FileDTO fileDTO) throws Exception{
-		Connection con = null;
 		int result = 0;
-		try{
-			con = DBConnector.getConnect();
-			con.setAutoCommit(false);
-			int seq = workDAO.fileNumSelect(con);
-			workDTO.setWork_seq(seq);
-			result=workDAO.insert(workDTO, con);
-			//------------------------------------------
-			fileDTO.setWork_seq(seq);
-			result = fileDAO.fileUpload(fileDTO, con);
-		}catch(Exception e){
-			con.rollback();
-			e.printStackTrace();
-		}finally{
-			con.setAutoCommit(true);
-			con.close();
-		}
+		
+		int seq = workDAO.fileNumSelect();
+		workDTO.setWork_seq(seq);
+		result=workDAO.insert(workDTO);
+		//------------------------------------------
+		fileDTO.setWork_seq(seq);
+		result = fileDAO.fileUpload(fileDTO);
 		
 		return result;
 	}

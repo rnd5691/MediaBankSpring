@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -23,79 +24,43 @@ public class WorkDAO {
 	private MemberDAO memberDAO;
 	private static final String NAMESPACE = "workMapper.";
 	//다운로드히트 업데이트 
-			public void downloadHitUpdate(int work_seq) throws Exception {
-				Connection con = DBConnector.getConnect();
-				String sql = "UPDATE WORK_INFO SET DOWNLOAD_HIT=DOWNLOAD_HIT+1 WHERE work_seq=?";
-				PreparedStatement st = con.prepareStatement(sql);
-				st.setInt(1, work_seq);
-				st.executeUpdate();
-				DBConnector.disConnect(st, con);
-			}
+	public void downloadHitUpdate(int work_seq) throws Exception {
+		sqlSession.update(NAMESPACE+"downloadHitUpdate", work_seq);
+	}
 			
-		//관리자 승인,거부 난 작품들 리스트 가져오기
-		public boolean adminCheck(int work_seq) throws Exception{
-			Connection con = DBConnector.getConnect();
-			String sql = "select upload_check from work_info where work_seq=?";
-			PreparedStatement st = con.prepareStatement(sql);
-			
-			st.setInt(1, work_seq);
-			
-			ResultSet rs = st.executeQuery();
-			boolean check = true;
-			if(rs.next()){
-				if(rs.getString("upload_check").equals("대기중")||rs.getString("upload_check").equals("거부")){
-					check = true;
-				}else{
-					check = false;
-				}
-			}
-			DBConnector.disConnect(rs, st, con);
-			
-			return check;
+	//관리자 승인,거부 난 작품들 리스트 가져오기
+	public boolean adminCheck(int work_seq) throws Exception{
+		String upload_check = sqlSession.selectOne(NAMESPACE+"adminCheck", work_seq);
+		boolean check = true;
+		if(upload_check.equals("대기중")||upload_check.equals("거부")) {
+			check = false;
 		}
-		//무명작가용 토탈카운트 이미지용
-			public int artistGetTotalCountImgString (String select, String search) throws Exception	{
-				Connection con = DBConnector.getConnect();
-				String sql = "select distinct count(nvl(w.work_seq, 0)) from work_info w, file_table f WHERE sell='Y' and upload_check='승인' and "+select+" Like '%"+search+"%' and f.file_kind='image' and w.work_seq=f.work_seq";
-				PreparedStatement st = con.prepareStatement(sql);
-				ResultSet rs = st.executeQuery();
-				rs.next();
-				int result = rs.getInt(1);
-				DBConnector.disConnect(rs, st, con);
-				return result;
-			}
-			//무명작가용 토탈카운트 비디오용
-			public int artistGetTotalCountVideo(String select, String search) throws Exception {
-				Connection con = DBConnector.getConnect();
-				String sql = "select count(w.work_seq) from work_info w, file_table f WHERE sell='Y' and upload_check='승인' and "+select+" Like '%"+search+"%' and f.file_kind='video' and w.work_seq=f.work_seq";
-				PreparedStatement st = con.prepareStatement(sql);
-				ResultSet rs = st.executeQuery();
-				rs.next();
-				int result = rs.getInt(1);
-				DBConnector.disConnect(rs, st, con);
-				return result;
-			}
+		return check;
+	}
+	//무명작가용 토탈카운트 이미지용
+	public int artistGetTotalCountImgString (String select, String search) throws Exception	{
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("select", select);
+		map.put("search", search);
+		return sqlSession.selectOne(NAMESPACE+"artistGetTotalCountImgString", map);		
+	}
+	//무명작가용 토탈카운트 비디오용
+	public int artistGetTotalCountVideo(String select, String search) throws Exception {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("select", select);
+		map.put("search", search);
+		
+		return sqlSession.selectOne(NAMESPACE+"artistGetTotalCountVideo", map);
+	}
 			
-			//태그에 해당하는 값만 가져와! 무명작가게시판용
-			public List<FileDTO> seachWorkSEQ(String tag, String kind, RowNum rowNum) throws Exception {
-				Connection con = DBConnector.getConnect();
-				String sql = "SELECT * FROM (SELECT rownum R, Q.* FROM (SELECT rownum ,f.* FROM FILE_TABLE f WHERE f.file_kind='"+kind+"' and work_seq IN (SELECT w.work_seq FROM work_info w WHERE tag LIKE '%"+tag+"%') ORDER BY f.work_seq desc) Q) WHERE R between ? and ?";
-				PreparedStatement st = con.prepareStatement(sql);
-				st.setInt(1, rowNum.getStartRow());
-				st.setInt(2, rowNum.getLastRow());
-				ResultSet rs = st.executeQuery();
-				List<FileDTO> ar = new ArrayList<FileDTO>();
-				FileDTO fileDTO = null;
-				while(rs.next()) {
-					fileDTO = new FileDTO();
-					fileDTO.setWork_seq(rs.getInt("work_seq"));
-					fileDTO.setFile_name(rs.getString("file_name"));
-					fileDTO.setFile_kind(rs.getString("file_kind"));
-					ar.add(fileDTO);
-				}
-				DBConnector.disConnect(rs, st, con);
-				return ar;
-			}
+	//태그에 해당하는 값만 가져와! 무명작가게시판용
+	public List<FileDTO> seachWorkSEQ(String tag, String kind, RowNum rowNum) throws Exception {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("tag", tag);
+		map.put("kind", kind);
+		map.put("rowNum", rowNum);
+		return sqlSession.selectList(NAMESPACE+"searchWorkSEQ", map);
+	}
 			//무명작가 검색창
 			public List<FileDTO> artistSearch(String kind, String select, String search,RowNum rowNum) throws Exception {
 				Connection con = DBConnector.getConnect();
@@ -470,8 +435,9 @@ public class WorkDAO {
 			return result;
 		}
 		
-		public int insert(WorkDTO workDTO,Connection con) throws Exception {
-			String sql = "INSERT INTO work_info VALUES(?,?,?,sysdate,'대기중',?,?,?,?,'N',0)";
+		public int insert(WorkDTO workDTO) throws Exception {
+			return sqlSession.insert(NAMESPACE+"insert",workDTO);
+			/*String sql = "INSERT INTO work_info VALUES(?,?,?,sysdate,'대기중',?,?,?,?,'N',0)";
 			PreparedStatement st = con.prepareStatement(sql);
 			st.setInt(1, workDTO.getWork_seq());
 			st.setString(2, workDTO.getWork());
@@ -482,20 +448,11 @@ public class WorkDAO {
 			st.setString(7, workDTO.getReply());
 			int result = st.executeUpdate();
 			st.close();
-			return result;
+			return result;*/
 		}
 		
 		//work_seq 찾기
-			 public int fileNumSelect(Connection con) throws Exception {
-				 String sql = "SELECT work_seq.nextval work_seq from dual";
-				 PreparedStatement st = con.prepareStatement(sql);
-				 ResultSet rs = st.executeQuery();
-				 int work_seq = 0;
-				 if(rs.next()) {
-					work_seq = rs.getInt("work_seq");
-				 }
-				 rs.close();
-				 st.close();
-				 return work_seq;
-			 }
+		public int fileNumSelect() throws Exception {
+			return sqlSession.selectOne(NAMESPACE+"fileNumSelect");
+		}
 }

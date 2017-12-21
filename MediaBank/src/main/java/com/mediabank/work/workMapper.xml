@@ -14,4 +14,34 @@
 		set work=#{work}, work_date=sysdate, tag=#{tag}, price=#{price}, contents=#{contents}, upload_check='대기중', reply=null 
 		where work_seq=#{work_seq} 
 	</update>
+	<select id="fileNumSelect" resultType="int">
+		select work_seq.nextval work_seq from dual
+	</select>
+	<insert id="insert" parameterType="com.mediabank.work.WorkDTO">
+		insert into work_info values(#{work_seq},#{work},#{user_num},sysdate,'대기중',#{tag},#{price},#{contents},#{reply, jdbcType=VARCHAR},'N',0)
+	</insert>
+	<update id="downloadHitUpdate" parameterType="int">
+		update work_info set download_hit=download_hit+1 where work_seq=#{work_seq}
+	</update>
+	<select id="adminCheck" parameterType="int" resultType="String">
+		select upload_check from work_info where work_seq=#{work_seq}
+	</select>
+	<select id="artistGetTotalCountImgString" parameterType="java.util.HashMap" resultType="int">
+		select distinct count(nvl(w.work_seq, 0)) 
+		from work_info w, file_table f where sell='Y' and upload_check='승인' and #{select} 
+		like '%'||#{search}||'%' and f.file_kind='image' and w.work_seq=f.work_seq
+	</select>
+	<select id="artistGetTotalCountVideo" parameterType="java.uitl.HashMap" resultType="int">
+		select count(w.work_seq) 
+		from work_inf w, file_table f where sell='Y' and upload_check='승인' and ${select} 
+		like '%'||#{search}||'%' and f.file_kind='video' and w.work_seq=f.work_seq
+	</select>
+	<select id="searchWorkSEQ" parameterType="java.util.HashMap" resultType="com.mediabank.file.FileDTO">
+		select * from 
+		(select rownum R, Q.* from 
+		(select rownum, f.* from file_table f 
+		where f.file_kind=#{kind} and work_seq in 
+		(select w.work_seq from work_info w where tag like '%'||#{tag}||'%') 
+		order by f.work_seq desc) Q) where R between #{rowNum.startRow} and #{rowNum.lastRow}
+	</select>
 </mapper>
